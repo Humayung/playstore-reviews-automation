@@ -1,0 +1,17 @@
+{
+  "name": "playstore-api",
+  "version": "1.0.0",
+  "description": "Fetch Play Store reviews using Google Play Developer API",
+  "main": "fetch-reviews.js",
+  "type": "module",
+  "scripts": {
+    "start": "node fetch-reviews.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "googleapis": "^133.0.0",
+    "dotenv": "^16.4.5"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "playstore-reviews-automation",
+  "version": "1.0.0",
+  "description": "Script to fetch Play Store reviews for a specific app",
+  "main": "fetch-reviews.js",
+  "type": "module",
+  "scripts": {
+    "start": "node fetch-reviews.js"
+  },
+  "dependencies": {
+    "google-play-scraper": "^10.0.1"
+  }
+} 

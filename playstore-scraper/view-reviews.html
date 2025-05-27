@@ -503,11 +503,12 @@
             margin-bottom: 32px;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
+            height: 400px;
         }
 
-        .chart-container:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--card-shadow-hover);
+        .chart-container canvas {
+            max-height: 100%;
+            width: 100% !important;
         }
 
         .chart-container h3 {
@@ -885,6 +886,122 @@
                 font-size: 13px;
             }
         }
+
+        .all-reviews-layout {
+            display: flex;
+            gap: 24px;
+            height: calc(100vh - 200px);
+        }
+
+        .app-list {
+            width: 280px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-list-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-list-header h3 {
+            margin: 0 0 16px 0;
+            color: var(--text-primary);
+            font-size: 18px;
+        }
+
+        .app-list-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .app-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+        }
+
+        .app-item:hover {
+            background: var(--hover-color);
+            transform: translateX(4px);
+        }
+
+        .app-item.active {
+            background: var(--hover-color);
+            border-color: var(--primary-color);
+        }
+
+        .app-item-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .app-item-count {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .all-reviews-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .all-reviews-layout {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .app-list {
+                width: 100%;
+                margin-bottom: 24px;
+            }
+
+            .app-list-content {
+                max-height: 200px;
+            }
+        }
+
+        .all-apps-item {
+            background: var(--hover-color);
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 16px;
+            padding: 16px;
+        }
+        
+        .all-apps-item .app-item-name {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .all-apps-item:hover {
+            background: var(--hover-color);
+            transform: none;
+        }
+        
+        .all-apps-item.active {
+            background: var(--hover-color);
+            border-color: var(--primary-color);
+        }
+
+        .no-reviews {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 16px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
@@ -927,93 +1044,62 @@
     <div class="controls">
         <h1>Play Store Reviews Viewer</h1>
         <div class="tabs">
-            <div class="tab active" data-tab="reviews">Reviews</div>
-            <div class="tab" data-tab="allReviews">All Reviews</div>
+            <div class="tab active" data-tab="allReviews">All Reviews</div>
             <div class="tab" data-tab="report">Report</div>
         </div>
-        <div id="reviewsTab" class="tab-content active">
-            <div class="controls-row">
-                <div class="left-controls">
-                    <select id="monthSelect">
-                        <option value="">Select Month</option>
-                    </select>
-                    <span id="reviewCount"></span>
+        <div id="allReviewsTab" class="tab-content active">
+            <div class="all-reviews-layout">
+                <div class="app-list">
+                    <div class="app-list-header">
+                        <h3>Apps</h3>
+                        <select id="allReviewsMonthSelect">
+                            <option value="">All Time</option>
+                        </select>
+                    </div>
+                    <div class="app-list-content" id="appListContent">
+                        <!-- Apps will be populated here -->
+                    </div>
                 </div>
-                <div class="right-controls">
-                    <button id="viewModeBtn" class="secondary-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/>
-                        </svg>
-                        Switch to Table
-                    </button>
-                    <button id="exportBtn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        Export Month
-                    </button>
+                <div class="all-reviews-content">
+                    <div class="controls-row">
+                        <div class="left-controls">
+                            <span id="appReviewCount"></span>
+                        </div>
+                        <div class="right-controls">
+                            <button id="allReviewsViewModeBtn" class="secondary-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/>
+                                </svg>
+                                Switch to Table
+                            </button>
+                            <button id="exportAppBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Export App
+                            </button>
+                        </div>
+                    </div>
+                    <div id="allReviewsContainer"></div>
+                    <div id="allReviewsTableContainer" style="display: none;">
+                        <table class="reviews-table">
+                            <thead>
+                                <tr>
+                                    <th data-sort="appName">App Name <span class="sort-icon">↕</span></th>
+                                    <th data-sort="scoreText">Rating <span class="sort-icon">↕</span></th>
+                                    <th data-sort="text">Review <span class="sort-icon">↕</span></th>
+                                    <th data-sort="date">Date <span class="sort-icon">↕</span></th>
+                                    <th data-sort="version">Version <span class="sort-icon">↕</span></th>
+                                    <th data-sort="userName">User <span class="sort-icon">↕</span></th>
+                                    <th>Reply</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allReviewsTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            <div id="reviewsContainer"></div>
-            <div id="reviewsTableContainer" style="display: none;">
-                <table class="reviews-table">
-                    <thead>
-                        <tr>
-                            <th data-sort="appName">App Name <span class="sort-icon">↕</span></th>
-                            <th data-sort="scoreText">Rating <span class="sort-icon">↕</span></th>
-                            <th data-sort="text">Review <span class="sort-icon">↕</span></th>
-                            <th data-sort="date">Date <span class="sort-icon">↕</span></th>
-                            <th data-sort="version">Version <span class="sort-icon">↕</span></th>
-                            <th data-sort="userName">User <span class="sort-icon">↕</span></th>
-                            <th>Reply</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reviewsTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-        <div id="allReviewsTab" class="tab-content">
-            <div class="controls-row">
-                <div class="left-controls">
-                    <select id="appSelect">
-                        <option value="">Select App</option>
-                    </select>
-                    <span id="appReviewCount"></span>
-                </div>
-                <div class="right-controls">
-                    <button id="allReviewsViewModeBtn" class="secondary-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/>
-                        </svg>
-                        Switch to Table
-                    </button>
-                    <button id="exportAppBtn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        Export App
-                    </button>
-                </div>
-            </div>
-            <div id="allReviewsContainer"></div>
-            <div id="allReviewsTableContainer" style="display: none;">
-                <table class="reviews-table">
-                    <thead>
-                        <tr>
-                            <th data-sort="scoreText">Rating <span class="sort-icon">↕</span></th>
-                            <th data-sort="text">Review <span class="sort-icon">↕</span></th>
-                            <th data-sort="date">Date <span class="sort-icon">↕</span></th>
-                            <th data-sort="version">Version <span class="sort-icon">↕</span></th>
-                            <th data-sort="userName">User <span class="sort-icon">↕</span></th>
-                            <th>Reply</th>
-                        </tr>
-                    </thead>
-                    <tbody id="allReviewsTableBody"></tbody>
-                </table>
             </div>
         </div>
         <div id="reportTab" class="tab-content">
@@ -1037,7 +1123,7 @@
             </div>
             <div class="chart-container">
                 <h3>Rating Distribution</h3>
-                <div id="ratingChart"></div>
+                <canvas id="ratingChart"></canvas>
             </div>
             <div class="app-stats">
                 <h3>App Statistics</h3>
@@ -1063,26 +1149,498 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let allReviews = [];
-        let currentMonthReviews = [];
         let isStandalone = false;
         let ratingChart = null;
-        let isTableView = false;
-        let currentSort = { column: 'date', direction: 'desc' };
         let isAllReviewsTableView = false;
         let currentAllReviewsSort = { column: 'date', direction: 'desc' };
         let currentAppReviews = [];
-        let currentAppPackage = '';
+        let currentAppPackage = 'all';
+
+        // Load reviews from JSON file
+        async function loadReviews() {
+            try {
+                const response = await fetch('output/all-reviews.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                allReviews = await response.json();
+                
+                // Populate app list
+                const appListContent = document.getElementById('appListContent');
+                const uniqueApps = new Map();
+                
+                // Add "All Apps" option
+                const allAppsItem = document.createElement('div');
+                allAppsItem.className = 'all-apps-item active';
+                allAppsItem.innerHTML = `
+                    <div class="app-item-name">All Apps</div>
+                    <div class="app-item-count">${allReviews.length} reviews</div>
+                `;
+                allAppsItem.addEventListener('click', () => {
+                    document.querySelectorAll('.app-item, .all-apps-item').forEach(item => item.classList.remove('active'));
+                    allAppsItem.classList.add('active');
+                    currentAppPackage = 'all';
+                    displayAllAppsReviews();
+                    saveState();
+                });
+                appListContent.appendChild(allAppsItem);
+                
+                // Group reviews by app
+                allReviews.forEach(review => {
+                    if (!uniqueApps.has(review.packageName)) {
+                        uniqueApps.set(review.packageName, {
+                            name: review.appName,
+                            count: 1
+                        });
+                    } else {
+                        uniqueApps.get(review.packageName).count++;
+                    }
+                });
+                
+                // Create app list items
+                uniqueApps.forEach((app, packageName) => {
+                    const appItem = document.createElement('div');
+                    appItem.className = 'app-item';
+                    appItem.dataset.packageName = packageName;
+                    appItem.innerHTML = `
+                        <div class="app-item-name">${app.name}</div>
+                        <div class="app-item-count">${app.count} reviews</div>
+                    `;
+                    appItem.addEventListener('click', () => {
+                        document.querySelectorAll('.app-item, .all-apps-item').forEach(item => item.classList.remove('active'));
+                        appItem.classList.add('active');
+                        currentAppPackage = packageName;
+                        displayAppReviews(packageName);
+                        saveState();
+                    });
+                    appListContent.appendChild(appItem);
+                });
+                
+                // Populate month select
+                const monthSelect = document.getElementById('allReviewsMonthSelect');
+                const months = new Set();
+                allReviews.forEach(review => {
+                    const date = new Date(review.date);
+                    const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    months.add(monthYear);
+                });
+                
+                const sortedMonths = Array.from(months).sort().reverse();
+                monthSelect.innerHTML = '<option value="">All Time</option>';
+                sortedMonths.forEach(month => {
+                    const [year, monthNum] = month.split('-');
+                    const date = new Date(year, monthNum - 1);
+                    const option = document.createElement('option');
+                    option.value = month;
+                    option.textContent = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                    monthSelect.appendChild(option);
+                });
+                
+                // Add month select change handler
+                monthSelect.addEventListener('change', () => {
+                    const selectedMonth = monthSelect.value;
+                    if (currentAppPackage === 'all') {
+                        displayAllAppsReviews(selectedMonth);
+                    } else {
+                        displayAppReviews(currentAppPackage, selectedMonth);
+                    }
+                    saveState();
+                });
+                
+                // Display all apps reviews by default
+                displayAllAppsReviews();
+                
+                // Update report tab
+                updateReportTab();
+                
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                alert('Error loading reviews. Please make sure reviews.json exists and is valid.');
+            }
+        }
+
+        // Display reviews for a specific app
+        function displayAppReviews(packageName, selectedMonth = '') {
+            currentAppReviews = allReviews.filter(review => {
+                if (review.packageName !== packageName) return false;
+                if (!selectedMonth) return true;
+                const reviewDate = new Date(review.date);
+                const reviewMonth = `${reviewDate.getFullYear()}-${String(reviewDate.getMonth() + 1).padStart(2, '0')}`;
+                return reviewMonth === selectedMonth;
+            });
+            
+            if (currentAppReviews.length === 0) {
+                document.getElementById('appReviewCount').textContent = 'No reviews found';
+                document.getElementById('allReviewsContainer').innerHTML = '<div class="no-reviews">No reviews found for the selected period</div>';
+                document.getElementById('allReviewsTableBody').innerHTML = '<tr><td colspan="7" class="no-reviews">No reviews found for the selected period</td></tr>';
+                return;
+            }
+            
+            const app = currentAppReviews[0];
+            document.getElementById('appReviewCount').textContent = `${currentAppReviews.length} reviews for ${app.appName}`;
+            document.getElementById('exportAppBtn').style.display = 'inline-flex';
+            
+            // Update export button text based on month selection
+            const exportBtn = document.getElementById('exportAppBtn');
+            if (selectedMonth) {
+                const [year, month] = selectedMonth.split('-');
+                const date = new Date(year, month - 1);
+                const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                exportBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Export ${monthName}
+                `;
+            } else {
+                exportBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Export App
+                `;
+            }
+            
+            if (isAllReviewsTableView) {
+                displayAllReviewsTable(currentAppReviews);
+            } else {
+                displayAllReviewsCards(currentAppReviews);
+            }
+        }
+
+        // Display reviews for all apps
+        function displayAllAppsReviews(selectedMonth = '') {
+            currentAppReviews = allReviews.filter(review => {
+                if (!selectedMonth) return true;
+                const reviewDate = new Date(review.date);
+                const reviewMonth = `${reviewDate.getFullYear()}-${String(reviewDate.getMonth() + 1).padStart(2, '0')}`;
+                return reviewMonth === selectedMonth;
+            });
+            
+            document.getElementById('appReviewCount').textContent = `${currentAppReviews.length} total reviews`;
+            document.getElementById('exportAppBtn').style.display = 'none';
+            
+            // Update export all button text based on month selection
+            const exportAllBtn = document.getElementById('exportAllBtn');
+            if (selectedMonth) {
+                const [year, month] = selectedMonth.split('-');
+                const date = new Date(year, month - 1);
+                const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                exportAllBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Export ${monthName}
+                `;
+            } else {
+                exportAllBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Export All Reviews
+                `;
+            }
+            
+            if (isAllReviewsTableView) {
+                displayAllReviewsTable(currentAppReviews);
+            } else {
+                displayAllReviewsCards(currentAppReviews);
+            }
+        }
+
+        // Display reviews in card view
+        function displayAllReviewsCards(reviews) {
+            const container = document.getElementById('allReviewsContainer');
+            container.innerHTML = '';
+            
+            reviews.forEach(review => {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.innerHTML = `
+                    <div class="review-header">
+                        <div class="user-info">
+                            <img src="${review.userImage}" alt="${review.userName}" class="user-image">
+                            <div>
+                                <div class="app-name">${review.appName}</div>
+                                <div class="version">${review.version}</div>
+                            </div>
+                        </div>
+                        <div class="stars">${'★'.repeat(parseInt(review.scoreText))}${'☆'.repeat(5 - parseInt(review.scoreText))}</div>
+                    </div>
+                    <div class="review-content">${review.text}</div>
+                    ${review.reply ? `
+                        <div class="review-reply">
+                            <strong>Developer Reply:</strong><br>
+                            ${review.reply}<br>
+                            <small>${getTimeAgo(review.replyDate)}</small>
+                        </div>
+                    ` : ''}
+                    <div class="review-meta">
+                        <div class="date-info">
+                            <div>${review.userName}</div>
+                            <div>${getTimeAgo(review.date)}</div>
+                        </div>
+                        <a href="${review.url}" target="_blank" class="review-link">View on Play Store</a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Display reviews in table view
+        function displayAllReviewsTable(reviews) {
+            const tbody = document.getElementById('allReviewsTableBody');
+            tbody.innerHTML = '';
+            
+            // Sort reviews
+            const sortedReviews = [...reviews].sort((a, b) => {
+                const aValue = a[currentAllReviewsSort.column];
+                const bValue = b[currentAllReviewsSort.column];
+                
+                if (currentAllReviewsSort.column === 'date') {
+                    return currentAllReviewsSort.direction === 'asc' 
+                        ? new Date(aValue) - new Date(bValue)
+                        : new Date(bValue) - new Date(aValue);
+                }
+                
+                if (currentAllReviewsSort.column === 'scoreText') {
+                    return currentAllReviewsSort.direction === 'asc'
+                        ? parseInt(aValue) - parseInt(bValue)
+                        : parseInt(bValue) - parseInt(aValue);
+                }
+                
+                return currentAllReviewsSort.direction === 'asc'
+                    ? String(aValue).localeCompare(String(bValue))
+                    : String(bValue).localeCompare(String(aValue));
+            });
+            
+            sortedReviews.forEach(review => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${review.appName}</td>
+                    <td>${'★'.repeat(parseInt(review.scoreText))}${'☆'.repeat(5 - parseInt(review.scoreText))}</td>
+                    <td>${review.text}</td>
+                    <td>${getTimeAgo(review.date)}</td>
+                    <td>${review.version}</td>
+                    <td>${review.userName}</td>
+                    <td>${review.reply ? review.reply : '-'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update report tab with statistics
+        function updateReportTab() {
+            // Update total reviews
+            document.getElementById('totalReviews').textContent = allReviews.length;
+            
+            // Calculate average rating
+            const totalRating = allReviews.reduce((sum, review) => sum + parseInt(review.scoreText), 0);
+            const avgRating = (totalRating / allReviews.length).toFixed(1);
+            document.getElementById('avgRating').textContent = avgRating;
+            
+            // Count unique apps
+            const uniqueApps = new Set(allReviews.map(review => review.packageName));
+            document.getElementById('totalApps').textContent = uniqueApps.size;
+            
+            // Count reviews with replies
+            const reviewsWithReplies = allReviews.filter(review => review.reply).length;
+            document.getElementById('reviewsWithReplies').textContent = reviewsWithReplies;
+            
+            // Update rating distribution chart
+            const ratingCounts = [0, 0, 0, 0, 0];
+            allReviews.forEach(review => {
+                const rating = parseInt(review.scoreText);
+                ratingCounts[rating - 1]++;
+            });
+            
+            if (ratingChart) {
+                ratingChart.destroy();
+            }
+            
+            const ctx = document.getElementById('ratingChart').getContext('2d');
+            ratingChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['1★', '2★', '3★', '4★', '5★'],
+                    datasets: [{
+                        label: 'Number of Reviews',
+                        data: ratingCounts,
+                        backgroundColor: [
+                            '#ef4444',
+                            '#f97316',
+                            '#eab308',
+                            '#84cc16',
+                            '#22c55e'
+                        ],
+                        borderColor: [
+                            '#dc2626',
+                            '#ea580c',
+                            '#ca8a04',
+                            '#65a30d',
+                            '#16a34a'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 500
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: Math.max(1, Math.ceil(Math.max(...ratingCounts) / 10)),
+                                precision: 0
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Update app statistics table
+            const appStatsBody = document.getElementById('appStatsBody');
+            appStatsBody.innerHTML = '';
+            
+            uniqueApps.forEach(packageName => {
+                const appReviews = allReviews.filter(review => review.packageName === packageName);
+                const appName = appReviews[0].appName;
+                const totalReviews = appReviews.length;
+                const appTotalRating = appReviews.reduce((sum, review) => sum + parseInt(review.scoreText), 0);
+                const appAvgRating = (appTotalRating / totalReviews).toFixed(1);
+                
+                const appRatingCounts = [0, 0, 0, 0, 0];
+                appReviews.forEach(review => {
+                    const rating = parseInt(review.scoreText);
+                    appRatingCounts[rating - 1]++;
+                });
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${appName}</td>
+                    <td>${totalReviews}</td>
+                    <td>${appAvgRating}</td>
+                    <td>${appRatingCounts[0]}</td>
+                    <td>${appRatingCounts[1]}</td>
+                    <td>${appRatingCounts[2]}</td>
+                    <td>${appRatingCounts[3]}</td>
+                    <td>${appRatingCounts[4]}</td>
+                `;
+                appStatsBody.appendChild(row);
+            });
+        }
+
+        // Utility functions
+        function reviewsToCSV(reviews) {
+            const headers = ['pos', 'packageName', 'appName', 'userName', 'scoreText', 'text', 'date', 'version', 'reply', 'replyDate', 'url', 'userImage'];
+            const csvContent = [
+                headers.join(','),
+                ...reviews.map((review, index) => 
+                    headers.map(header => {
+                        const value = review[header] || '';
+                        // Escape quotes and wrap in quotes
+                        return `"${String(value).replace(/"/g, '""')}"`;
+                    }).join(',')
+                )
+            ].join('\n');
+            return csvContent;
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function createStandaloneViewer() {
+            // Get the current HTML content
+            const htmlContent = document.documentElement.outerHTML;
+            
+            // Create a new HTML content with embedded JSON
+            const standaloneContent = htmlContent.replace(
+                'let allReviews = [];',
+                `let allReviews = ${JSON.stringify(allReviews)};`
+            ).replace(
+                'let isStandalone = false;',
+                'let isStandalone = true;'
+            );
+            
+            // Create and download the file
+            const blob = new Blob([standaloneContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'playstore-reviews-viewer.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+            
+            let interval = seconds / 31536000; // years
+            if (interval > 1) return Math.floor(interval) + ' years ago';
+            
+            interval = seconds / 2592000; // months
+            if (interval > 1) return Math.floor(interval) + ' months ago';
+            
+            interval = seconds / 86400; // days
+            if (interval > 1) return Math.floor(interval) + ' days ago';
+            
+            interval = seconds / 3600; // hours
+            if (interval > 1) return Math.floor(interval) + ' hours ago';
+            
+            interval = seconds / 60; // minutes
+            if (interval > 1) return Math.floor(interval) + ' minutes ago';
+            
+            return Math.floor(seconds) + ' seconds ago';
+        }
+
+        function wrapTablesInContainer() {
+            const tables = document.querySelectorAll('.reviews-table, .app-stats table');
+            tables.forEach(table => {
+                if (!table.parentElement.classList.contains('table-container')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'table-container';
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            });
+        }
 
         // State management functions
         function saveState() {
             const state = {
                 activeTab: document.querySelector('.tab.active').dataset.tab,
-                isTableView,
-                currentSort,
                 isAllReviewsTableView,
                 currentAllReviewsSort,
-                currentAppPackage,
-                selectedMonth: document.getElementById('monthSelect').value
+                currentAppPackage: currentAppPackage || 'all',
+                selectedMonth: document.getElementById('allReviewsMonthSelect').value
             };
             localStorage.setItem('reviewsViewerState', JSON.stringify(state));
         }
@@ -1100,56 +1658,36 @@
                 });
 
                 // Restore view modes
-                isTableView = state.isTableView;
                 isAllReviewsTableView = state.isAllReviewsTableView;
-                currentSort = state.currentSort;
                 currentAllReviewsSort = state.currentAllReviewsSort;
-                currentAppPackage = state.currentAppPackage;
+                currentAppPackage = state.currentAppPackage || 'all';
 
                 // Update UI to reflect saved state
                 updateViewModeButtons();
                 
-                // Restore selections
-                if (state.selectedMonth) {
-                    document.getElementById('monthSelect').value = state.selectedMonth;
-                    displayReviews(state.selectedMonth);
+                // Select the appropriate app in the list
+                const appItem = document.querySelector(`.app-item[data-package-name="${currentAppPackage}"]`);
+                if (appItem) {
+                    document.querySelectorAll('.app-item').forEach(item => item.classList.remove('active'));
+                    appItem.classList.add('active');
+                    if (currentAppPackage === 'all') {
+                        displayAllAppsReviews(state.selectedMonth);
+                    } else {
+                        displayAppReviews(currentAppPackage, state.selectedMonth);
+                    }
                 }
-                
-                if (state.currentAppPackage) {
-                    document.getElementById('appSelect').value = state.currentAppPackage;
-                    displayAppReviews(state.currentAppPackage);
+            } else {
+                // If no saved state, show all apps by default
+                const allAppsItem = document.querySelector('.all-apps-item');
+                if (allAppsItem) {
+                    allAppsItem.classList.add('active');
+                    displayAllAppsReviews();
                 }
             }
         }
 
+        // Update view mode buttons function
         function updateViewModeButtons() {
-            // Update main reviews view mode button
-            const viewModeBtn = document.getElementById('viewModeBtn');
-            if (isTableView) {
-                viewModeBtn.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                    Switch to Cards
-                `;
-                document.getElementById('reviewsContainer').style.display = 'none';
-                document.getElementById('reviewsTableContainer').style.display = 'block';
-                displayReviewsTable(currentMonthReviews);
-            } else {
-                viewModeBtn.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/>
-                    </svg>
-                    Switch to Table
-                `;
-                document.getElementById('reviewsContainer').style.display = 'block';
-                document.getElementById('reviewsTableContainer').style.display = 'none';
-            }
-
-            // Update all reviews view mode button
             const allReviewsViewModeBtn = document.getElementById('allReviewsViewModeBtn');
             if (isAllReviewsTableView) {
                 allReviewsViewModeBtn.innerHTML = `
@@ -1178,39 +1716,14 @@
             }
         }
 
-        // Update existing functions to save state
-        function toggleViewMode() {
-            isTableView = !isTableView;
-            updateViewModeButtons();
-            saveState();
-        }
-
+        // Function to toggle all reviews view mode
         function toggleAllReviewsViewMode() {
             isAllReviewsTableView = !isAllReviewsTableView;
             updateViewModeButtons();
             saveState();
         }
 
-        function handleTableSort(column) {
-            const headers = document.querySelectorAll('.reviews-table th[data-sort]');
-            headers.forEach(header => {
-                header.classList.remove('sorted-asc', 'sorted-desc');
-            });
-
-            if (currentSort.column === column) {
-                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSort.column = column;
-                currentSort.direction = 'desc';
-            }
-
-            const header = document.querySelector(`.reviews-table th[data-sort="${column}"]`);
-            header.classList.add(`sorted-${currentSort.direction}`);
-
-            displayReviewsTable(currentMonthReviews);
-            saveState();
-        }
-
+        // Function to handle all reviews table sort
         function handleAllReviewsTableSort(column) {
             const headers = document.querySelectorAll('#allReviewsTableContainer th[data-sort]');
             headers.forEach(header => {
@@ -1231,42 +1744,7 @@
             saveState();
         }
 
-        // Update tab switching to save state
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.tab + 'Tab').classList.add('active');
-                saveState();
-            });
-        });
-
-        // Update month selection to save state
-        document.getElementById('monthSelect').addEventListener('change', (e) => {
-            if (e.target.value) {
-                displayReviews(e.target.value);
-            } else {
-                document.getElementById('reviewsContainer').innerHTML = '';
-                document.getElementById('reviewCount').textContent = '';
-                currentMonthReviews = [];
-            }
-            saveState();
-        });
-
-        // Update app selection to save state
-        document.getElementById('appSelect').addEventListener('change', (e) => {
-            if (e.target.value) {
-                displayAppReviews(e.target.value);
-            } else {
-                document.getElementById('allReviewsContainer').innerHTML = '';
-                document.getElementById('appReviewCount').textContent = '';
-            }
-            saveState();
-        });
-
-        // Initialize the viewer with saved state
+        // Initialize the viewer
         function initializeViewer() {
             if (isStandalone) {
                 document.getElementById('standaloneBtn').style.display = 'none';
@@ -1277,376 +1755,16 @@
             });
         }
 
-        // Function to convert reviews to CSV
-        function reviewsToCSV(reviews) {
-            const headers = ['pos', 'packageName', 'appName', 'userName', 'scoreText', 'text', 'date', 'version', 'reply', 'replyDate', 'url', 'userImage'];
-            const csvContent = [
-                headers.join(','),
-                ...reviews.map((review, index) => 
-                    headers.map(header => {
-                        const value = review[header] || '';
-                        // Escape quotes and wrap in quotes
-                        return `"${String(value).replace(/"/g, '""')}"`;
-                    }).join(',')
-                )
-            ].join('\n');
-            return csvContent;
-        }
-
-        // Function to download CSV
-        function downloadCSV(csv, filename) {
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', filename);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }
-
-        // Function to create standalone viewer
-        function createStandaloneViewer() {
-            // Get the current HTML content
-            const htmlContent = document.documentElement.outerHTML;
-            
-            // Create a new HTML content with embedded JSON
-            const standaloneContent = htmlContent.replace(
-                'let allReviews = [];',
-                `let allReviews = ${JSON.stringify(allReviews)};`
-            ).replace(
-                'let isStandalone = false;',
-                'let isStandalone = true;'
-            );
-            
-            // Create and download the file
-            const blob = new Blob([standaloneContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'playstore-reviews-viewer.html';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }
-
-        // Function to get time ago string
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-            
-            let interval = seconds / 31536000; // years
-            if (interval > 1) return Math.floor(interval) + ' years ago';
-            
-            interval = seconds / 2592000; // months
-            if (interval > 1) return Math.floor(interval) + ' months ago';
-            
-            interval = seconds / 86400; // days
-            if (interval > 1) return Math.floor(interval) + ' days ago';
-            
-            interval = seconds / 3600; // hours
-            if (interval > 1) return Math.floor(interval) + ' hours ago';
-            
-            interval = seconds / 60; // minutes
-            if (interval > 1) return Math.floor(interval) + ' minutes ago';
-            
-            return Math.floor(seconds) + ' seconds ago';
-        }
-
-        // Function to calculate and display statistics
-        function updateStatistics() {
-            // Calculate total reviews
-            document.getElementById('totalReviews').textContent = allReviews.length;
-
-            // Calculate average rating
-            const avgRating = allReviews.reduce((sum, review) => sum + parseInt(review.scoreText), 0) / allReviews.length;
-            document.getElementById('avgRating').textContent = avgRating.toFixed(1);
-
-            // Calculate total unique apps
-            const uniqueApps = new Set(allReviews.map(review => review.packageName));
-            document.getElementById('totalApps').textContent = uniqueApps.size;
-
-            // Calculate reviews with replies
-            const reviewsWithReplies = allReviews.filter(review => review.reply).length;
-            document.getElementById('reviewsWithReplies').textContent = reviewsWithReplies;
-
-            // Calculate rating distribution
-            const ratingDist = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
-            allReviews.forEach(review => {
-                ratingDist[review.scoreText]++;
+        // Event listeners
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab + 'Tab').classList.add('active');
+                saveState();
             });
-
-            // Update rating chart
-            if (ratingChart) {
-                ratingChart.destroy();
-            }
-            const ctx = document.createElement('canvas');
-            document.getElementById('ratingChart').innerHTML = '';
-            document.getElementById('ratingChart').appendChild(ctx);
-            ratingChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['1★', '2★', '3★', '4★', '5★'],
-                    datasets: [{
-                        label: 'Number of Reviews',
-                        data: Object.values(ratingDist),
-                        backgroundColor: [
-                            'rgba(239, 68, 68, 0.9)',   // Red
-                            'rgba(245, 158, 11, 0.9)',  // Orange
-                            'rgba(234, 179, 8, 0.9)',   // Yellow
-                            'rgba(34, 197, 94, 0.9)',   // Green
-                            'rgba(59, 130, 246, 0.9)'   // Blue
-                        ],
-                        borderWidth: 0,
-                        borderRadius: 8,
-                        barThickness: 40,
-                        maxBarThickness: 50,
-                        borderSkipped: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#ffffff',
-                            bodyColor: '#ffffff',
-                            padding: 16,
-                            titleFont: {
-                                size: 14,
-                                weight: 'bold',
-                                family: "'Inter', sans-serif"
-                            },
-                            bodyFont: {
-                                size: 13,
-                                family: "'Inter', sans-serif"
-                            },
-                            cornerRadius: 8,
-                            displayColors: false,
-                            callbacks: {
-                                label: function(context) {
-                                    const value = context.raw;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${value} reviews (${percentage}%)`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'var(--border-color)',
-                                drawBorder: false,
-                                lineWidth: 1
-                            },
-                            ticks: {
-                                stepSize: 1,
-                                font: {
-                                    size: 12,
-                                    family: "'Inter', sans-serif"
-                                },
-                                padding: 10,
-                                color: 'var(--text-secondary)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                font: {
-                                    size: 14,
-                                    weight: 'bold',
-                                    family: "'Inter', sans-serif"
-                                },
-                                padding: 10,
-                                color: 'var(--text-primary)'
-                            }
-                        }
-                    },
-                    animation: {
-                        duration: 1000,
-                        easing: 'easeOutQuart'
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    }
-                }
-            });
-
-            // Set chart container height
-            document.getElementById('ratingChart').style.height = '300px';
-
-            // Update app statistics table
-            const appStats = {};
-            allReviews.forEach(review => {
-                if (!appStats[review.packageName]) {
-                    appStats[review.packageName] = {
-                        appName: review.appName,
-                        totalReviews: 0,
-                        totalRating: 0,
-                        ratingDist: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
-                    };
-                }
-                appStats[review.packageName].totalReviews++;
-                appStats[review.packageName].totalRating += parseInt(review.scoreText);
-                appStats[review.packageName].ratingDist[review.scoreText]++;
-            });
-
-            const tbody = document.getElementById('appStatsBody');
-            tbody.innerHTML = '';
-            Object.entries(appStats).forEach(([packageName, stats]) => {
-                const avgRating = (stats.totalRating / stats.totalReviews).toFixed(1);
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${stats.appName}</td>
-                    <td>${stats.totalReviews}</td>
-                    <td>${avgRating}</td>
-                    <td>${stats.ratingDist[1]}</td>
-                    <td>${stats.ratingDist[2]}</td>
-                    <td>${stats.ratingDist[3]}</td>
-                    <td>${stats.ratingDist[4]}</td>
-                    <td>${stats.ratingDist[5]}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Load reviews from JSON file or use embedded data
-        async function loadReviews() {
-            try {
-                if (isStandalone) {
-                    populateMonthSelect();
-                    populateAppSelect();
-                } else {
-                    const response = await fetch('output/all-reviews.json');
-                    allReviews = await response.json();
-                    populateMonthSelect();
-                    populateAppSelect();
-                }
-                updateStatistics();
-            } catch (error) {
-                console.error('Error loading reviews:', error);
-                document.getElementById('reviewsContainer').innerHTML = 'Error loading reviews. Please make sure the JSON file exists.';
-            }
-        }
-
-        // Populate month select dropdown
-        function populateMonthSelect() {
-            const months = new Set();
-            allReviews.forEach(review => {
-                const date = new Date(review.date);
-                const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-                months.add(monthYear);
-            });
-
-            const monthSelect = document.getElementById('monthSelect');
-            Array.from(months).sort().reverse().forEach(month => {
-                const [year, monthNum] = month.split('-');
-                const date = new Date(year, monthNum - 1);
-                const option = document.createElement('option');
-                option.value = month;
-                option.textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-                monthSelect.appendChild(option);
-            });
-
-            // Set current month as default
-            const now = new Date();
-            const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            
-            // If current month exists in the options, select it
-            if (months.has(currentMonth)) {
-                monthSelect.value = currentMonth;
-                displayReviews(currentMonth);
-            } else {
-                // If current month doesn't exist, select the first available month
-                const firstMonth = Array.from(months).sort().reverse()[0];
-                if (firstMonth) {
-                    monthSelect.value = firstMonth;
-                    displayReviews(firstMonth);
-                }
-            }
-        }
-
-        // Display reviews for selected month
-        function displayReviews(month) {
-            const [year, monthNum] = month.split('-');
-            const startDate = new Date(year, monthNum - 1, 1);
-            const endDate = new Date(year, monthNum, 0);
-
-            currentMonthReviews = allReviews.filter(review => {
-                const reviewDate = new Date(review.date);
-                return reviewDate >= startDate && reviewDate <= endDate;
-            });
-
-            document.getElementById('reviewCount').textContent = `${currentMonthReviews.length} reviews`;
-
-            if (isTableView) {
-                displayReviewsTable(currentMonthReviews);
-            } else {
-                const container = document.getElementById('reviewsContainer');
-                container.innerHTML = '';
-
-                currentMonthReviews.forEach(review => {
-                    const card = document.createElement('div');
-                    card.className = 'review-card';
-                    card.onclick = () => window.open(review.url, '_blank');
-                    
-                    const stars = '★'.repeat(review.scoreText) + '☆'.repeat(5 - review.scoreText);
-                    const timeAgo = getTimeAgo(review.date);
-                    
-                    card.innerHTML = `
-                        <div class="review-header">
-                            <span class="app-name">${review.appName}</span>
-                            <span class="version">v${review.version}</span>
-                        </div>
-                        <div class="stars">${stars}</div>
-                        <div class="review-content">${review.text}</div>
-                        ${review.reply ? `
-                            <div class="review-reply">
-                                <div><strong>Developer Reply:</strong> ${review.reply}</div>
-                                <div><small>${review.replyDate}</small></div>
-                            </div>
-                        ` : ''}
-                        <div class="review-meta">
-                            <div class="user-info">
-                                <img src="${review.userImage}" alt="${review.userName}" class="user-image" onerror="this.src='https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png'">
-                                <span>${review.userName}</span>
-                            </div>
-                            <div class="date-info">
-                                <div>${review.date}</div>
-                                <div style="color: #666; font-size: 0.9em;">${timeAgo}</div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    container.appendChild(card);
-                });
-            }
-        }
-
-        // Event listener for export button
-        document.getElementById('exportBtn').addEventListener('click', () => {
-            if (currentMonthReviews.length === 0) {
-                alert('No reviews to export');
-                return;
-            }
-
-            const monthSelect = document.getElementById('monthSelect');
-            const selectedMonth = monthSelect.options[monthSelect.selectedIndex].text;
-            const filename = `reviews_${selectedMonth.replace(' ', '_')}.csv`;
-            
-            const csv = reviewsToCSV(currentMonthReviews);
-            downloadCSV(csv, filename);
         });
 
         // Event listener for export all button
@@ -1661,169 +1779,29 @@
             downloadCSV(csv, filename);
         });
 
+        // Event listener for export app button
+        document.getElementById('exportAppBtn').addEventListener('click', () => {
+            if (currentAppReviews.length === 0) {
+                alert('No reviews to export');
+                return;
+            }
+
+            const appName = currentAppPackage === 'all' ? 'all_apps' : currentAppReviews[0].appName;
+            const filename = `${appName.toLowerCase().replace(/\s+/g, '_')}_reviews.csv`;
+            const csv = reviewsToCSV(currentAppReviews);
+            downloadCSV(csv, filename);
+        });
+
         // Event listener for standalone button
         document.getElementById('standaloneBtn').addEventListener('click', createStandaloneViewer);
 
-        // Function to populate app select dropdown
-        function populateAppSelect() {
-            const apps = new Map();
-            allReviews.forEach(review => {
-                if (!apps.has(review.packageName)) {
-                    apps.set(review.packageName, {
-                        name: review.appName,
-                        packageName: review.packageName
-                    });
-                }
-            });
+        // Event listener for all reviews view mode toggle
+        document.getElementById('allReviewsViewModeBtn').addEventListener('click', toggleAllReviewsViewMode);
 
-            const appSelect = document.getElementById('appSelect');
-            appSelect.innerHTML = '<option value="">Select App</option>';
-            
-            Array.from(apps.values())
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .forEach(app => {
-                    const option = document.createElement('option');
-                    option.value = app.packageName;
-                    option.textContent = app.name;
-                    appSelect.appendChild(option);
-                });
-        }
-
-        // Function to display reviews for selected app
-        function displayAppReviews(packageName) {
-            currentAppPackage = packageName;
-            currentAppReviews = allReviews.filter(review => review.packageName === packageName);
-            document.getElementById('appReviewCount').textContent = `${currentAppReviews.length} reviews`;
-
-            if (isAllReviewsTableView) {
-                displayAllReviewsTable(currentAppReviews);
-            } else {
-                const container = document.getElementById('allReviewsContainer');
-                container.innerHTML = '';
-
-                currentAppReviews.forEach(review => {
-                    const card = document.createElement('div');
-                    card.className = 'review-card';
-                    card.onclick = () => window.open(review.url, '_blank');
-                    
-                    const stars = '★'.repeat(review.scoreText) + '☆'.repeat(5 - review.scoreText);
-                    const timeAgo = getTimeAgo(review.date);
-                    
-                    card.innerHTML = `
-                        <div class="review-header">
-                            <span class="version">v${review.version}</span>
-                        </div>
-                        <div class="stars">${stars}</div>
-                        <div class="review-content">${review.text}</div>
-                        ${review.reply ? `
-                            <div class="review-reply">
-                                <div><strong>Developer Reply:</strong> ${review.reply}</div>
-                                <div><small>${review.replyDate}</small></div>
-                            </div>
-                        ` : ''}
-                        <div class="review-meta">
-                            <div class="user-info">
-                                <img src="${review.userImage}" alt="${review.userName}" class="user-image" onerror="this.src='https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png'">
-                                <span>${review.userName}</span>
-                            </div>
-                            <div class="date-info">
-                                <div>${review.date}</div>
-                                <div style="color: #666; font-size: 0.9em;">${timeAgo}</div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    container.appendChild(card);
-                });
-            }
-        }
-
-        // Function to display reviews in table format
-        function displayReviewsTable(reviews) {
-            const tbody = document.getElementById('reviewsTableBody');
-            tbody.innerHTML = '';
-
-            const sortedReviews = [...reviews].sort((a, b) => {
-                const aValue = a[currentSort.column];
-                const bValue = b[currentSort.column];
-                
-                if (currentSort.column === 'date') {
-                    return currentSort.direction === 'asc' 
-                        ? new Date(aValue) - new Date(bValue)
-                        : new Date(bValue) - new Date(aValue);
-                }
-                
-                if (currentSort.column === 'scoreText') {
-                    return currentSort.direction === 'asc'
-                        ? parseInt(aValue) - parseInt(bValue)
-                        : parseInt(bValue) - parseInt(aValue);
-                }
-
-                return currentSort.direction === 'asc'
-                    ? String(aValue).localeCompare(String(bValue))
-                    : String(bValue).localeCompare(String(aValue));
-            });
-
-            sortedReviews.forEach(review => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${review.appName}</td>
-                    <td><span class="stars">${'★'.repeat(review.scoreText)}${'☆'.repeat(5 - review.scoreText)}</span></td>
-                    <td><div class="review-text">${review.text}</div></td>
-                    <td>${review.date}</td>
-                    <td>v${review.version}</td>
-                    <td>${review.userName}</td>
-                    <td class="reply-cell">${review.reply ? `<strong>Reply:</strong> ${review.reply}` : '-'}</td>
-                `;
-                row.onclick = () => window.open(review.url, '_blank');
-                tbody.appendChild(row);
-            });
-
-            wrapTablesInContainer();
-        }
-
-        // Function to display all reviews in table format
-        function displayAllReviewsTable(reviews) {
-            const tbody = document.getElementById('allReviewsTableBody');
-            tbody.innerHTML = '';
-
-            const sortedReviews = [...reviews].sort((a, b) => {
-                const aValue = a[currentAllReviewsSort.column];
-                const bValue = b[currentAllReviewsSort.column];
-                
-                if (currentAllReviewsSort.column === 'date') {
-                    return currentAllReviewsSort.direction === 'asc' 
-                        ? new Date(aValue) - new Date(bValue)
-                        : new Date(bValue) - new Date(aValue);
-                }
-                
-                if (currentAllReviewsSort.column === 'scoreText') {
-                    return currentAllReviewsSort.direction === 'asc'
-                        ? parseInt(aValue) - parseInt(bValue)
-                        : parseInt(bValue) - parseInt(aValue);
-                }
-
-                return currentAllReviewsSort.direction === 'asc'
-                    ? String(aValue).localeCompare(String(bValue))
-                    : String(bValue).localeCompare(String(aValue));
-            });
-
-            sortedReviews.forEach(review => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><span class="stars">${'★'.repeat(review.scoreText)}${'☆'.repeat(5 - review.scoreText)}</span></td>
-                    <td><div class="review-text">${review.text}</div></td>
-                    <td>${review.date}</td>
-                    <td>v${review.version}</td>
-                    <td>${review.userName}</td>
-                    <td class="reply-cell">${review.reply ? `<strong>Reply:</strong> ${review.reply}` : '-'}</td>
-                `;
-                row.onclick = () => window.open(review.url, '_blank');
-                tbody.appendChild(row);
-            });
-
-            wrapTablesInContainer();
-        }
+        // Event listeners for all reviews table sorting
+        document.querySelectorAll('#allReviewsTableContainer th[data-sort]').forEach(header => {
+            header.addEventListener('click', () => handleAllReviewsTableSort(header.dataset.sort));
+        });
 
         // Theme toggle functionality
         const themeToggle = document.getElementById('themeToggle');
@@ -1853,35 +1831,6 @@
                 sunIcon.style.display = 'none';
                 moonIcon.style.display = 'block';
             }
-        }
-
-        // Event listener for view mode toggle
-        document.getElementById('viewModeBtn').addEventListener('click', toggleViewMode);
-
-        // Event listener for all reviews view mode toggle
-        document.getElementById('allReviewsViewModeBtn').addEventListener('click', toggleAllReviewsViewMode);
-
-        // Event listeners for table sorting
-        document.querySelectorAll('.reviews-table th[data-sort]').forEach(header => {
-            header.addEventListener('click', () => handleTableSort(header.dataset.sort));
-        });
-
-        // Event listeners for all reviews table sorting
-        document.querySelectorAll('#allReviewsTableContainer th[data-sort]').forEach(header => {
-            header.addEventListener('click', () => handleAllReviewsTableSort(header.dataset.sort));
-        });
-
-        // Add responsive table container wrapper
-        function wrapTablesInContainer() {
-            const tables = document.querySelectorAll('.reviews-table, .app-stats table');
-            tables.forEach(table => {
-                if (!table.parentElement.classList.contains('table-container')) {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'table-container';
-                    table.parentNode.insertBefore(wrapper, table);
-                    wrapper.appendChild(table);
-                }
-            });
         }
 
         // Initialize the viewer

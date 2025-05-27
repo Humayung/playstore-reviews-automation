@@ -1156,18 +1156,28 @@
         let currentAppReviews = [];
         let currentAppPackage = 'all';
 
-        // Load reviews from JSON file
+        // Load reviews from JSON file or use embedded data
         async function loadReviews() {
             try {
-                const response = await fetch('output/all-reviews.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (isStandalone) {
+                    console.log('Running in standalone mode with embedded reviews');
+                    if (!Array.isArray(allReviews) || allReviews.length === 0) {
+                        throw new Error('No reviews data found in standalone mode');
+                    }
+                } else {
+                    const response = await fetch('output/all-reviews.json');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    allReviews = await response.json();
                 }
-                allReviews = await response.json();
                 
-                // Populate app list
+                // Initialize currentAppReviews with all reviews
+                currentAppReviews = [...allReviews];
+                
+                // Clear existing app list
                 const appListContent = document.getElementById('appListContent');
-                const uniqueApps = new Map();
+                appListContent.innerHTML = '';
                 
                 // Add "All Apps" option
                 const allAppsItem = document.createElement('div');
@@ -1176,16 +1186,16 @@
                     <div class="app-item-name">All Apps</div>
                     <div class="app-item-count">${allReviews.length} reviews</div>
                 `;
-                allAppsItem.addEventListener('click', () => {
+                allAppsItem.onclick = function() {
                     document.querySelectorAll('.app-item, .all-apps-item').forEach(item => item.classList.remove('active'));
-                    allAppsItem.classList.add('active');
+                    this.classList.add('active');
                     currentAppPackage = 'all';
                     displayAllAppsReviews();
-                    saveState();
-                });
+                };
                 appListContent.appendChild(allAppsItem);
                 
                 // Group reviews by app
+                const uniqueApps = new Map();
                 allReviews.forEach(review => {
                     if (!uniqueApps.has(review.packageName)) {
                         uniqueApps.set(review.packageName, {
@@ -1206,13 +1216,12 @@
                         <div class="app-item-name">${app.name}</div>
                         <div class="app-item-count">${app.count} reviews</div>
                     `;
-                    appItem.addEventListener('click', () => {
+                    appItem.onclick = function() {
                         document.querySelectorAll('.app-item, .all-apps-item').forEach(item => item.classList.remove('active'));
-                        appItem.classList.add('active');
+                        this.classList.add('active');
                         currentAppPackage = packageName;
                         displayAppReviews(packageName);
-                        saveState();
-                    });
+                    };
                     appListContent.appendChild(appItem);
                 });
                 
@@ -1237,15 +1246,58 @@
                 });
                 
                 // Add month select change handler
-                monthSelect.addEventListener('change', () => {
-                    const selectedMonth = monthSelect.value;
+                monthSelect.onchange = function() {
+                    const selectedMonth = this.value;
                     if (currentAppPackage === 'all') {
                         displayAllAppsReviews(selectedMonth);
                     } else {
                         displayAppReviews(currentAppPackage, selectedMonth);
                     }
-                    saveState();
-                });
+                    
+                    // Update export buttons based on month selection
+                    const exportAllBtn = document.getElementById('exportAllBtn');
+                    const exportAppBtn = document.getElementById('exportAppBtn');
+                    
+                    if (selectedMonth) {
+                        const [year, month] = selectedMonth.split('-');
+                        const date = new Date(year, month - 1);
+                        const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                        
+                        if (currentAppPackage === 'all') {
+                            exportAppBtn.style.display = 'inline-flex';
+                            exportAppBtn.innerHTML = `
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Export ${monthName}
+                            `;
+                        } else {
+                            exportAppBtn.innerHTML = `
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Export ${monthName}
+                            `;
+                        }
+                    } else {
+                        if (currentAppPackage === 'all') {
+                            exportAppBtn.style.display = 'none';
+                        } else {
+                            exportAppBtn.innerHTML = `
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Export App
+                            `;
+                        }
+                    }
+                };
                 
                 // Display all apps reviews by default
                 displayAllAppsReviews();
@@ -1255,12 +1307,15 @@
                 
             } catch (error) {
                 console.error('Error loading reviews:', error);
-                alert('Error loading reviews. Please make sure reviews.json exists and is valid.');
+                if (!isStandalone) {
+                    alert('Error loading reviews. Please make sure reviews.json exists and is valid.');
+                }
             }
         }
 
         // Display reviews for a specific app
         function displayAppReviews(packageName, selectedMonth = '') {
+            console.log('Displaying reviews for package:', packageName);
             currentAppReviews = allReviews.filter(review => {
                 if (review.packageName !== packageName) return false;
                 if (!selectedMonth) return true;
@@ -1280,31 +1335,6 @@
             document.getElementById('appReviewCount').textContent = `${currentAppReviews.length} reviews for ${app.appName}`;
             document.getElementById('exportAppBtn').style.display = 'inline-flex';
             
-            // Update export button text based on month selection
-            const exportBtn = document.getElementById('exportAppBtn');
-            if (selectedMonth) {
-                const [year, month] = selectedMonth.split('-');
-                const date = new Date(year, month - 1);
-                const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                exportBtn.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Export ${monthName}
-                `;
-            } else {
-                exportBtn.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Export App
-                `;
-            }
-            
             if (isAllReviewsTableView) {
                 displayAllReviewsTable(currentAppReviews);
             } else {
@@ -1322,15 +1352,15 @@
             });
             
             document.getElementById('appReviewCount').textContent = `${currentAppReviews.length} total reviews`;
-            document.getElementById('exportAppBtn').style.display = 'none';
             
-            // Update export all button text based on month selection
-            const exportAllBtn = document.getElementById('exportAllBtn');
+            // Show/hide and update export button based on month selection
+            const exportAppBtn = document.getElementById('exportAppBtn');
             if (selectedMonth) {
                 const [year, month] = selectedMonth.split('-');
                 const date = new Date(year, month - 1);
                 const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                exportAllBtn.innerHTML = `
+                exportAppBtn.style.display = 'inline-flex';
+                exportAppBtn.innerHTML = `
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>
@@ -1339,14 +1369,7 @@
                     Export ${monthName}
                 `;
             } else {
-                exportAllBtn.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Export All Reviews
-                `;
+                exportAppBtn.style.display = 'none';
             }
             
             if (isAllReviewsTableView) {
@@ -1576,28 +1599,34 @@
         }
 
         function createStandaloneViewer() {
-            // Get the current HTML content
-            const htmlContent = document.documentElement.outerHTML;
-            
-            // Create a new HTML content with embedded JSON
-            const standaloneContent = htmlContent.replace(
-                'let allReviews = [];',
-                `let allReviews = ${JSON.stringify(allReviews)};`
-            ).replace(
-                'let isStandalone = false;',
-                'let isStandalone = true;'
-            );
-            
-            // Create and download the file
-            const blob = new Blob([standaloneContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'playstore-reviews-viewer.html';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            // Read the file itself
+            fetch('view-reviews.html')
+                .then(response => response.text())
+                .then(htmlContent => {
+                    // Create a new HTML content with embedded JSON
+                    const standaloneContent = htmlContent.replace(
+                        'let allReviews = [];',
+                        `let allReviews = ${JSON.stringify(allReviews)};`
+                    ).replace(
+                        'let isStandalone = false;',
+                        'let isStandalone = true;'
+                    );
+                    
+                    // Create and download the file
+                    const blob = new Blob([standaloneContent], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'playstore-reviews-viewer.html';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error('Error creating standalone viewer:', error);
+                    alert('Error creating standalone viewer. Please try again.');
+                });
         }
 
         function getTimeAgo(date) {
@@ -1635,54 +1664,15 @@
 
         // State management functions
         function saveState() {
-            const state = {
-                activeTab: document.querySelector('.tab.active').dataset.tab,
-                isAllReviewsTableView,
-                currentAllReviewsSort,
-                currentAppPackage: currentAppPackage || 'all',
-                selectedMonth: document.getElementById('allReviewsMonthSelect').value
-            };
-            localStorage.setItem('reviewsViewerState', JSON.stringify(state));
+            // No longer saving state to localStorage
         }
 
         function loadState() {
-            const savedState = localStorage.getItem('reviewsViewerState');
-            if (savedState) {
-                const state = JSON.parse(savedState);
-                
-                // Restore active tab
-                document.querySelectorAll('.tab').forEach(tab => {
-                    if (tab.dataset.tab === state.activeTab) {
-                        tab.click();
-                    }
-                });
-
-                // Restore view modes
-                isAllReviewsTableView = state.isAllReviewsTableView;
-                currentAllReviewsSort = state.currentAllReviewsSort;
-                currentAppPackage = state.currentAppPackage || 'all';
-
-                // Update UI to reflect saved state
-                updateViewModeButtons();
-                
-                // Select the appropriate app in the list
-                const appItem = document.querySelector(`.app-item[data-package-name="${currentAppPackage}"]`);
-                if (appItem) {
-                    document.querySelectorAll('.app-item').forEach(item => item.classList.remove('active'));
-                    appItem.classList.add('active');
-                    if (currentAppPackage === 'all') {
-                        displayAllAppsReviews(state.selectedMonth);
-                    } else {
-                        displayAppReviews(currentAppPackage, state.selectedMonth);
-                    }
-                }
-            } else {
-                // If no saved state, show all apps by default
-                const allAppsItem = document.querySelector('.all-apps-item');
-                if (allAppsItem) {
-                    allAppsItem.classList.add('active');
-                    displayAllAppsReviews();
-                }
+            // Default to showing all apps
+            const allAppsItem = document.querySelector('.all-apps-item');
+            if (allAppsItem) {
+                allAppsItem.classList.add('active');
+                displayAllAppsReviews();
             }
         }
 
@@ -1720,7 +1710,6 @@
         function toggleAllReviewsViewMode() {
             isAllReviewsTableView = !isAllReviewsTableView;
             updateViewModeButtons();
-            saveState();
         }
 
         // Function to handle all reviews table sort
@@ -1741,7 +1730,6 @@
             header.classList.add(`sorted-${currentAllReviewsSort.direction}`);
 
             displayAllReviewsTable(currentAppReviews);
-            saveState();
         }
 
         // Initialize the viewer
@@ -1763,7 +1751,6 @@
                 
                 tab.classList.add('active');
                 document.getElementById(tab.dataset.tab + 'Tab').classList.add('active');
-                saveState();
             });
         });
 
@@ -1774,8 +1761,23 @@
                 return;
             }
 
-            const filename = 'all_reviews.csv';
-            const csv = reviewsToCSV(allReviews);
+            const selectedMonth = document.getElementById('allReviewsMonthSelect').value;
+            let reviewsToExport = allReviews;
+            let filename = 'all_reviews.csv';
+
+            if (selectedMonth) {
+                const [year, month] = selectedMonth.split('-');
+                const date = new Date(year, month - 1);
+                const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                reviewsToExport = allReviews.filter(review => {
+                    const reviewDate = new Date(review.date);
+                    const reviewMonth = `${reviewDate.getFullYear()}-${String(reviewDate.getMonth() + 1).padStart(2, '0')}`;
+                    return reviewMonth === selectedMonth;
+                });
+                filename = `reviews_${monthName.toLowerCase().replace(/\s+/g, '_')}.csv`;
+            }
+
+            const csv = reviewsToCSV(reviewsToExport);
             downloadCSV(csv, filename);
         });
 
@@ -1786,8 +1788,19 @@
                 return;
             }
 
-            const appName = currentAppPackage === 'all' ? 'all_apps' : currentAppReviews[0].appName;
-            const filename = `${appName.toLowerCase().replace(/\s+/g, '_')}_reviews.csv`;
+            const selectedMonth = document.getElementById('allReviewsMonthSelect').value;
+            let filename;
+            
+            if (currentAppPackage === 'all' && selectedMonth) {
+                const [year, month] = selectedMonth.split('-');
+                const date = new Date(year, month - 1);
+                const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                filename = `reviews_${monthName.toLowerCase().replace(/\s+/g, '_')}.csv`;
+            } else {
+                const appName = currentAppPackage === 'all' ? 'all_apps' : currentAppReviews[0].appName;
+                filename = `${appName.toLowerCase().replace(/\s+/g, '_')}_reviews.csv`;
+            }
+            
             const csv = reviewsToCSV(currentAppReviews);
             downloadCSV(csv, filename);
         });

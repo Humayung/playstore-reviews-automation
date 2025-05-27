@@ -57,7 +57,7 @@
             font-family: 'Inter', sans-serif;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 32px;
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
             color: var(--text-primary);
             line-height: 1.5;
@@ -66,16 +66,16 @@
 
         .controls {
             background: var(--card-bg);
-            padding: 32px;
+            padding: 40px;
             border-radius: 24px;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
             box-shadow: var(--card-shadow);
             backdrop-filter: blur(10px);
             border: 1px solid var(--border-color);
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             margin-bottom: 32px;
             color: var(--text-primary);
@@ -84,6 +84,20 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
+            padding: 8px 0;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            border-radius: 2px;
+            opacity: 0.2;
         }
 
         .tabs {
@@ -146,24 +160,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 16px;
+            gap: 24px;
             margin-bottom: 32px;
             flex-wrap: wrap;
-            background: var(--hover-color);
-            padding: 16px;
+            background: var(--card-bg);
+            padding: 24px;
             border-radius: 16px;
+            box-shadow: var(--card-shadow);
             border: 1px solid var(--border-color);
         }
 
         .left-controls {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 24px;
         }
 
         .right-controls {
             display: flex;
-            gap: 8px;
+            gap: 12px;
         }
 
         select {
@@ -174,7 +189,7 @@
             background-color: var(--card-bg);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
-            min-width: 200px;
+            min-width: 240px;
             cursor: pointer;
             transition: all 0.3s ease;
             height: 48px;
@@ -192,7 +207,7 @@
         }
 
         button {
-            padding: 12px 20px;
+            padding: 12px 24px;
             border: none;
             border-radius: 12px;
             font-family: 'Inter', sans-serif;
@@ -278,15 +293,13 @@
 
         .review-card {
             background: var(--card-bg);
-            padding: 24px;
-            margin-bottom: 20px;
+            padding: 32px;
+            margin-bottom: 32px;
             border-radius: 16px;
             box-shadow: var(--card-shadow);
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
+            border: 1px solid transparent;
         }
 
         .review-card::before {
@@ -314,12 +327,12 @@
         .review-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             color: var(--text-secondary);
         }
 
         .review-content {
-            margin: 16px 0;
+            margin: 20px 0;
             font-size: 15px;
             line-height: 1.7;
             color: var(--text-primary);
@@ -402,8 +415,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 16px;
-            padding-top: 16px;
+            margin-top: 24px;
+            padding-top: 20px;
             border-top: 1px solid var(--border-color);
             font-size: 13px;
             color: var(--text-secondary);
@@ -419,14 +432,14 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin-bottom: 32px;
         }
 
         .stat-card {
             background: var(--card-bg);
-            padding: 32px;
+            padding: 40px;
             border-radius: 16px;
             box-shadow: var(--card-shadow);
             border: 1px solid var(--border-color);
@@ -475,10 +488,10 @@
 
         .chart-container {
             background: var(--card-bg);
-            padding: 32px;
+            padding: 40px;
             border-radius: 16px;
             box-shadow: var(--card-shadow);
-            margin-bottom: 24px;
+            margin-bottom: 32px;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
         }
@@ -497,7 +510,7 @@
 
         .app-stats {
             background: var(--card-bg);
-            padding: 32px;
+            padding: 40px;
             border-radius: 16px;
             box-shadow: var(--card-shadow);
             border: 1px solid var(--border-color);
@@ -521,24 +534,29 @@
             border-collapse: separate;
             border-spacing: 0;
             margin-top: 16px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         .app-stats th {
-            background: var(--hover-color);
+            background: var(--card-bg);
+            padding: 20px 16px;
             font-weight: 600;
             color: var(--text-primary);
-            font-size: 14px;
-            padding: 16px;
-            text-align: left;
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--primary-color);
+            transition: all 0.2s ease;
+        }
+
+        .app-stats th:hover {
+            background: var(--hover-color);
         }
 
         .app-stats td {
-            padding: 16px;
-            font-size: 14px;
+            padding: 20px 16px;
             color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-color);
             transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .app-stats tr:hover td {
@@ -546,55 +564,350 @@
             color: var(--text-primary);
         }
 
-        @media (max-width: 768px) {
-            .controls {
-                padding: 20px;
-                border-radius: 16px;
-            }
+        .app-stats tr:last-child td {
+            border-bottom: none;
+        }
 
-            .controls-row {
-                padding: 12px;
-            }
-
-            select, button {
-                width: 100%;
-            }
-
-            .stat-card {
+        @media (max-width: 1200px) {
+            body {
                 padding: 24px;
             }
 
-            .stat-value {
-                font-size: 28px;
+            .controls {
+                padding: 32px;
+            }
+
+            .controls-row {
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .left-controls, .right-controls {
+                gap: 16px;
             }
         }
 
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+        @media (max-width: 992px) {
+            body {
+                padding: 20px;
+            }
+
+            .controls {
+                padding: 28px;
+            }
+
+            .stats-grid {
+                gap: 24px;
+            }
+
+            .stat-card {
+                padding: 32px;
+            }
+
+            .chart-container, .app-stats {
+                padding: 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .controls {
+                padding: 16px;
+            }
+
+            .controls-row {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .left-controls, .right-controls {
+                width: 100%;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .chart-container, .app-stats {
+                padding: 20px;
+                margin: 0 -16px;
+                width: calc(100% + 32px);
+                border-radius: 0;
+            }
+
+            .review-card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-bottom: 24px;
+            }
+
+            .reviews-table th,
+            .reviews-table td {
+                padding: 16px 12px;
+            }
+
+            .app-stats th,
+            .app-stats td {
+                padding: 16px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            .controls {
+                padding: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .review-card {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            h1 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .reviews-table th,
+            .reviews-table td {
+                padding: 12px 8px;
+            }
+
+            .app-stats th,
+            .app-stats td {
+                padding: 12px 8px;
+            }
+        }
+
+        .table-container {
+            margin: 0;
+            padding: 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .table-container {
+                margin: 0 -16px;
+                padding: 0 16px;
+                border-radius: 0;
+            }
+        }
+
+        button {
+            padding: 12px 24px;
+            height: 48px;
+        }
+
+        @media (max-width: 768px) {
+            button {
+                padding: 12px 20px;
+                height: 44px;
+            }
+        }
+
+        select {
+            padding: 12px 16px;
+            height: 48px;
+            min-width: 240px;
+        }
+
+        @media (max-width: 768px) {
+            select {
+                padding: 12px 16px;
+                height: 44px;
+                min-width: 100%;
+            }
+        }
+
+        /* Table Styling */
+        .reviews-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 16px;
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 4px var(--shadow-color);
-            z-index: 1000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
         }
 
-        .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px var(--shadow-color);
+        .reviews-table tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
         }
 
-        .theme-toggle svg {
-            width: 20px;
-            height: 20px;
+        .reviews-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .reviews-table th {
+            background: var(--card-bg);
+            padding: 20px 16px;
+            text-align: left;
+            font-weight: 600;
             color: var(--text-primary);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .reviews-table th:hover {
+            background: var(--hover-color);
+        }
+
+        .reviews-table td {
+            padding: 20px 16px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            transition: all 0.2s ease;
+        }
+
+        .reviews-table tr:hover td {
+            background: var(--hover-color);
+            color: var(--text-primary);
+        }
+
+        /* App Stats Table Styling */
+        .app-stats table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 16px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .app-stats th {
+            background: var(--card-bg);
+            padding: 20px 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--primary-color);
+            transition: all 0.2s ease;
+        }
+
+        .app-stats th:hover {
+            background: var(--hover-color);
+        }
+
+        .app-stats td {
+            padding: 20px 16px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-stats tr:hover td {
+            background: var(--hover-color);
+            color: var(--text-primary);
+        }
+
+        .app-stats tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Review Card Styling */
+        .review-card {
+            background: var(--card-bg);
+            padding: 32px;
+            margin-bottom: 32px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+        }
+
+        .review-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--primary-color);
+        }
+
+        .review-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .review-meta {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Controls Row Styling */
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .reviews-table th,
+            .reviews-table td {
+                padding: 16px 12px;
+            }
+
+            .app-stats th,
+            .app-stats td {
+                padding: 16px 12px;
+            }
+
+            .review-card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .reviews-table th,
+            .reviews-table td {
+                padding: 12px 8px;
+            }
+
+            .app-stats th,
+            .app-stats td {
+                padding: 12px 8px;
+            }
+
+            .review-card {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
         }
     </style>
 </head>
@@ -631,6 +944,12 @@
                     <span id="reviewCount"></span>
                 </div>
                 <div class="right-controls">
+                    <button id="viewModeBtn" class="secondary-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/>
+                        </svg>
+                        Switch to Table
+                    </button>
                     <button id="exportBtn">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -658,6 +977,22 @@
                 </div>
             </div>
             <div id="reviewsContainer"></div>
+            <div id="reviewsTableContainer" style="display: none;">
+                <table class="reviews-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="appName">App Name <span class="sort-icon">↕</span></th>
+                            <th data-sort="scoreText">Rating <span class="sort-icon">↕</span></th>
+                            <th data-sort="text">Review <span class="sort-icon">↕</span></th>
+                            <th data-sort="date">Date <span class="sort-icon">↕</span></th>
+                            <th data-sort="version">Version <span class="sort-icon">↕</span></th>
+                            <th data-sort="userName">User <span class="sort-icon">↕</span></th>
+                            <th>Reply</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviewsTableBody"></tbody>
+                </table>
+            </div>
         </div>
         <div id="allReviewsTab" class="tab-content">
             <div class="controls-row">
@@ -668,6 +1003,12 @@
                     <span id="appReviewCount"></span>
                 </div>
                 <div class="right-controls">
+                    <button id="allReviewsViewModeBtn" class="secondary-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/>
+                        </svg>
+                        Switch to Table
+                    </button>
                     <button id="exportAppBtn">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -679,6 +1020,21 @@
                 </div>
             </div>
             <div id="allReviewsContainer"></div>
+            <div id="allReviewsTableContainer" style="display: none;">
+                <table class="reviews-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="scoreText">Rating <span class="sort-icon">↕</span></th>
+                            <th data-sort="text">Review <span class="sort-icon">↕</span></th>
+                            <th data-sort="date">Date <span class="sort-icon">↕</span></th>
+                            <th data-sort="version">Version <span class="sort-icon">↕</span></th>
+                            <th data-sort="userName">User <span class="sort-icon">↕</span></th>
+                            <th>Reply</th>
+                        </tr>
+                    </thead>
+                    <tbody id="allReviewsTableBody"></tbody>
+                </table>
+            </div>
         </div>
         <div id="reportTab" class="tab-content">
             <div class="stats-grid">
@@ -730,6 +1086,216 @@
         let currentMonthReviews = [];
         let isStandalone = false;
         let ratingChart = null;
+        let isTableView = false;
+        let currentSort = { column: 'date', direction: 'desc' };
+        let isAllReviewsTableView = false;
+        let currentAllReviewsSort = { column: 'date', direction: 'desc' };
+        let currentAppReviews = [];
+        let currentAppPackage = '';
+
+        // State management functions
+        function saveState() {
+            const state = {
+                activeTab: document.querySelector('.tab.active').dataset.tab,
+                isTableView,
+                currentSort,
+                isAllReviewsTableView,
+                currentAllReviewsSort,
+                currentAppPackage,
+                selectedMonth: document.getElementById('monthSelect').value
+            };
+            localStorage.setItem('reviewsViewerState', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const savedState = localStorage.getItem('reviewsViewerState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                
+                // Restore active tab
+                document.querySelectorAll('.tab').forEach(tab => {
+                    if (tab.dataset.tab === state.activeTab) {
+                        tab.click();
+                    }
+                });
+
+                // Restore view modes
+                isTableView = state.isTableView;
+                isAllReviewsTableView = state.isAllReviewsTableView;
+                currentSort = state.currentSort;
+                currentAllReviewsSort = state.currentAllReviewsSort;
+                currentAppPackage = state.currentAppPackage;
+
+                // Update UI to reflect saved state
+                updateViewModeButtons();
+                
+                // Restore selections
+                if (state.selectedMonth) {
+                    document.getElementById('monthSelect').value = state.selectedMonth;
+                    displayReviews(state.selectedMonth);
+                }
+                
+                if (state.currentAppPackage) {
+                    document.getElementById('appSelect').value = state.currentAppPackage;
+                    displayAppReviews(state.currentAppPackage);
+                }
+            }
+        }
+
+        function updateViewModeButtons() {
+            // Update main reviews view mode button
+            const viewModeBtn = document.getElementById('viewModeBtn');
+            if (isTableView) {
+                viewModeBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    Switch to Cards
+                `;
+                document.getElementById('reviewsContainer').style.display = 'none';
+                document.getElementById('reviewsTableContainer').style.display = 'block';
+                displayReviewsTable(currentMonthReviews);
+            } else {
+                viewModeBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/>
+                    </svg>
+                    Switch to Table
+                `;
+                document.getElementById('reviewsContainer').style.display = 'block';
+                document.getElementById('reviewsTableContainer').style.display = 'none';
+            }
+
+            // Update all reviews view mode button
+            const allReviewsViewModeBtn = document.getElementById('allReviewsViewModeBtn');
+            if (isAllReviewsTableView) {
+                allReviewsViewModeBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    Switch to Cards
+                `;
+                document.getElementById('allReviewsContainer').style.display = 'none';
+                document.getElementById('allReviewsTableContainer').style.display = 'block';
+                if (currentAppReviews.length > 0) {
+                    displayAllReviewsTable(currentAppReviews);
+                }
+            } else {
+                allReviewsViewModeBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/>
+                    </svg>
+                    Switch to Table
+                `;
+                document.getElementById('allReviewsContainer').style.display = 'block';
+                document.getElementById('allReviewsTableContainer').style.display = 'none';
+            }
+        }
+
+        // Update existing functions to save state
+        function toggleViewMode() {
+            isTableView = !isTableView;
+            updateViewModeButtons();
+            saveState();
+        }
+
+        function toggleAllReviewsViewMode() {
+            isAllReviewsTableView = !isAllReviewsTableView;
+            updateViewModeButtons();
+            saveState();
+        }
+
+        function handleTableSort(column) {
+            const headers = document.querySelectorAll('.reviews-table th[data-sort]');
+            headers.forEach(header => {
+                header.classList.remove('sorted-asc', 'sorted-desc');
+            });
+
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'desc';
+            }
+
+            const header = document.querySelector(`.reviews-table th[data-sort="${column}"]`);
+            header.classList.add(`sorted-${currentSort.direction}`);
+
+            displayReviewsTable(currentMonthReviews);
+            saveState();
+        }
+
+        function handleAllReviewsTableSort(column) {
+            const headers = document.querySelectorAll('#allReviewsTableContainer th[data-sort]');
+            headers.forEach(header => {
+                header.classList.remove('sorted-asc', 'sorted-desc');
+            });
+
+            if (currentAllReviewsSort.column === column) {
+                currentAllReviewsSort.direction = currentAllReviewsSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentAllReviewsSort.column = column;
+                currentAllReviewsSort.direction = 'desc';
+            }
+
+            const header = document.querySelector(`#allReviewsTableContainer th[data-sort="${column}"]`);
+            header.classList.add(`sorted-${currentAllReviewsSort.direction}`);
+
+            displayAllReviewsTable(currentAppReviews);
+            saveState();
+        }
+
+        // Update tab switching to save state
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab + 'Tab').classList.add('active');
+                saveState();
+            });
+        });
+
+        // Update month selection to save state
+        document.getElementById('monthSelect').addEventListener('change', (e) => {
+            if (e.target.value) {
+                displayReviews(e.target.value);
+            } else {
+                document.getElementById('reviewsContainer').innerHTML = '';
+                document.getElementById('reviewCount').textContent = '';
+                currentMonthReviews = [];
+            }
+            saveState();
+        });
+
+        // Update app selection to save state
+        document.getElementById('appSelect').addEventListener('change', (e) => {
+            if (e.target.value) {
+                displayAppReviews(e.target.value);
+            } else {
+                document.getElementById('allReviewsContainer').innerHTML = '';
+                document.getElementById('appReviewCount').textContent = '';
+            }
+            saveState();
+        });
+
+        // Initialize the viewer with saved state
+        function initializeViewer() {
+            if (isStandalone) {
+                document.getElementById('standaloneBtn').style.display = 'none';
+            }
+            loadReviews().then(() => {
+                loadState();
+                wrapTablesInContainer();
+            });
+        }
 
         // Function to convert reviews to CSV
         function reviewsToCSV(reviews) {
@@ -1044,56 +1610,49 @@
 
             document.getElementById('reviewCount').textContent = `${currentMonthReviews.length} reviews`;
 
-            const container = document.getElementById('reviewsContainer');
-            container.innerHTML = '';
-
-            currentMonthReviews.forEach(review => {
-                const card = document.createElement('div');
-                card.className = 'review-card';
-                card.onclick = () => window.open(review.url, '_blank');
-                
-                const stars = '★'.repeat(review.scoreText) + '☆'.repeat(5 - review.scoreText);
-                const timeAgo = getTimeAgo(review.date);
-                
-                card.innerHTML = `
-                    <div class="review-header">
-                        <span class="app-name">${review.appName}</span>
-                        <span class="version">v${review.version}</span>
-                    </div>
-                    <div class="stars">${stars}</div>
-                    <div class="review-content">${review.text}</div>
-                    ${review.reply ? `
-                        <div class="review-reply">
-                            <div><strong>Developer Reply:</strong> ${review.reply}</div>
-                            <div><small>${review.replyDate}</small></div>
-                        </div>
-                    ` : ''}
-                    <div class="review-meta">
-                        <div class="user-info">
-                            <img src="${review.userImage}" alt="${review.userName}" class="user-image" onerror="this.src='https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png'">
-                            <span>${review.userName}</span>
-                        </div>
-                        <div class="date-info">
-                            <div>${review.date}</div>
-                            <div style="color: #666; font-size: 0.9em;">${timeAgo}</div>
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(card);
-            });
-        }
-
-        // Event listener for month selection
-        document.getElementById('monthSelect').addEventListener('change', (e) => {
-            if (e.target.value) {
-                displayReviews(e.target.value);
+            if (isTableView) {
+                displayReviewsTable(currentMonthReviews);
             } else {
-                document.getElementById('reviewsContainer').innerHTML = '';
-                document.getElementById('reviewCount').textContent = '';
-                currentMonthReviews = [];
+                const container = document.getElementById('reviewsContainer');
+                container.innerHTML = '';
+
+                currentMonthReviews.forEach(review => {
+                    const card = document.createElement('div');
+                    card.className = 'review-card';
+                    card.onclick = () => window.open(review.url, '_blank');
+                    
+                    const stars = '★'.repeat(review.scoreText) + '☆'.repeat(5 - review.scoreText);
+                    const timeAgo = getTimeAgo(review.date);
+                    
+                    card.innerHTML = `
+                        <div class="review-header">
+                            <span class="app-name">${review.appName}</span>
+                            <span class="version">v${review.version}</span>
+                        </div>
+                        <div class="stars">${stars}</div>
+                        <div class="review-content">${review.text}</div>
+                        ${review.reply ? `
+                            <div class="review-reply">
+                                <div><strong>Developer Reply:</strong> ${review.reply}</div>
+                                <div><small>${review.replyDate}</small></div>
+                            </div>
+                        ` : ''}
+                        <div class="review-meta">
+                            <div class="user-info">
+                                <img src="${review.userImage}" alt="${review.userName}" class="user-image" onerror="this.src='https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png'">
+                                <span>${review.userName}</span>
+                            </div>
+                            <div class="date-info">
+                                <div>${review.date}</div>
+                                <div style="color: #666; font-size: 0.9em;">${timeAgo}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(card);
+                });
             }
-        });
+        }
 
         // Event listener for export button
         document.getElementById('exportBtn').addEventListener('click', () => {
@@ -1125,29 +1684,166 @@
         // Event listener for standalone button
         document.getElementById('standaloneBtn').addEventListener('click', createStandaloneViewer);
 
-        // Tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs and contents
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                // Add active class to clicked tab and corresponding content
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.tab + 'Tab').classList.add('active');
+        // Function to populate app select dropdown
+        function populateAppSelect() {
+            const apps = new Map();
+            allReviews.forEach(review => {
+                if (!apps.has(review.packageName)) {
+                    apps.set(review.packageName, {
+                        name: review.appName,
+                        packageName: review.packageName
+                    });
+                }
             });
-        });
 
-        // Initialize the viewer
-        function initializeViewer() {
-            if (isStandalone) {
-                document.getElementById('standaloneBtn').style.display = 'none';
-            }
-            loadReviews();
+            const appSelect = document.getElementById('appSelect');
+            appSelect.innerHTML = '<option value="">Select App</option>';
+            
+            Array.from(apps.values())
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .forEach(app => {
+                    const option = document.createElement('option');
+                    option.value = app.packageName;
+                    option.textContent = app.name;
+                    appSelect.appendChild(option);
+                });
         }
 
-        // Initialize when page loads
-        initializeViewer();
+        // Function to display reviews for selected app
+        function displayAppReviews(packageName) {
+            currentAppPackage = packageName;
+            currentAppReviews = allReviews.filter(review => review.packageName === packageName);
+            document.getElementById('appReviewCount').textContent = `${currentAppReviews.length} reviews`;
+
+            if (isAllReviewsTableView) {
+                displayAllReviewsTable(currentAppReviews);
+            } else {
+                const container = document.getElementById('allReviewsContainer');
+                container.innerHTML = '';
+
+                currentAppReviews.forEach(review => {
+                    const card = document.createElement('div');
+                    card.className = 'review-card';
+                    card.onclick = () => window.open(review.url, '_blank');
+                    
+                    const stars = '★'.repeat(review.scoreText) + '☆'.repeat(5 - review.scoreText);
+                    const timeAgo = getTimeAgo(review.date);
+                    
+                    card.innerHTML = `
+                        <div class="review-header">
+                            <span class="version">v${review.version}</span>
+                        </div>
+                        <div class="stars">${stars}</div>
+                        <div class="review-content">${review.text}</div>
+                        ${review.reply ? `
+                            <div class="review-reply">
+                                <div><strong>Developer Reply:</strong> ${review.reply}</div>
+                                <div><small>${review.replyDate}</small></div>
+                            </div>
+                        ` : ''}
+                        <div class="review-meta">
+                            <div class="user-info">
+                                <img src="${review.userImage}" alt="${review.userName}" class="user-image" onerror="this.src='https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png'">
+                                <span>${review.userName}</span>
+                            </div>
+                            <div class="date-info">
+                                <div>${review.date}</div>
+                                <div style="color: #666; font-size: 0.9em;">${timeAgo}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        // Function to display reviews in table format
+        function displayReviewsTable(reviews) {
+            const tbody = document.getElementById('reviewsTableBody');
+            tbody.innerHTML = '';
+
+            const sortedReviews = [...reviews].sort((a, b) => {
+                const aValue = a[currentSort.column];
+                const bValue = b[currentSort.column];
+                
+                if (currentSort.column === 'date') {
+                    return currentSort.direction === 'asc' 
+                        ? new Date(aValue) - new Date(bValue)
+                        : new Date(bValue) - new Date(aValue);
+                }
+                
+                if (currentSort.column === 'scoreText') {
+                    return currentSort.direction === 'asc'
+                        ? parseInt(aValue) - parseInt(bValue)
+                        : parseInt(bValue) - parseInt(aValue);
+                }
+
+                return currentSort.direction === 'asc'
+                    ? String(aValue).localeCompare(String(bValue))
+                    : String(bValue).localeCompare(String(aValue));
+            });
+
+            sortedReviews.forEach(review => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${review.appName}</td>
+                    <td><span class="stars">${'★'.repeat(review.scoreText)}${'☆'.repeat(5 - review.scoreText)}</span></td>
+                    <td><div class="review-text">${review.text}</div></td>
+                    <td>${review.date}</td>
+                    <td>v${review.version}</td>
+                    <td>${review.userName}</td>
+                    <td class="reply-cell">${review.reply ? `<strong>Reply:</strong> ${review.reply}` : '-'}</td>
+                `;
+                row.onclick = () => window.open(review.url, '_blank');
+                tbody.appendChild(row);
+            });
+
+            wrapTablesInContainer();
+        }
+
+        // Function to display all reviews in table format
+        function displayAllReviewsTable(reviews) {
+            const tbody = document.getElementById('allReviewsTableBody');
+            tbody.innerHTML = '';
+
+            const sortedReviews = [...reviews].sort((a, b) => {
+                const aValue = a[currentAllReviewsSort.column];
+                const bValue = b[currentAllReviewsSort.column];
+                
+                if (currentAllReviewsSort.column === 'date') {
+                    return currentAllReviewsSort.direction === 'asc' 
+                        ? new Date(aValue) - new Date(bValue)
+                        : new Date(bValue) - new Date(aValue);
+                }
+                
+                if (currentAllReviewsSort.column === 'scoreText') {
+                    return currentAllReviewsSort.direction === 'asc'
+                        ? parseInt(aValue) - parseInt(bValue)
+                        : parseInt(bValue) - parseInt(aValue);
+                }
+
+                return currentAllReviewsSort.direction === 'asc'
+                    ? String(aValue).localeCompare(String(bValue))
+                    : String(bValue).localeCompare(String(aValue));
+            });
+
+            sortedReviews.forEach(review => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="stars">${'★'.repeat(review.scoreText)}${'☆'.repeat(5 - review.scoreText)}</span></td>
+                    <td><div class="review-text">${review.text}</div></td>
+                    <td>${review.date}</td>
+                    <td>v${review.version}</td>
+                    <td>${review.userName}</td>
+                    <td class="reply-cell">${review.reply ? `<strong>Reply:</strong> ${review.reply}` : '-'}</td>
+                `;
+                row.onclick = () => window.open(review.url, '_blank');
+                tbody.appendChild(row);
+            });
+
+            wrapTablesInContainer();
+        }
 
         // Theme toggle functionality
         const themeToggle = document.getElementById('themeToggle');
@@ -1179,105 +1875,37 @@
             }
         }
 
-        // Function to populate app select dropdown
-        function populateAppSelect() {
-            const apps = new Map();
-            allReviews.forEach(review => {
-                if (!apps.has(review.packageName)) {
-                    apps.set(review.packageName, {
-                        name: review.appName,
-                        packageName: review.packageName
-                    });
+        // Event listener for view mode toggle
+        document.getElementById('viewModeBtn').addEventListener('click', toggleViewMode);
+
+        // Event listener for all reviews view mode toggle
+        document.getElementById('allReviewsViewModeBtn').addEventListener('click', toggleAllReviewsViewMode);
+
+        // Event listeners for table sorting
+        document.querySelectorAll('.reviews-table th[data-sort]').forEach(header => {
+            header.addEventListener('click', () => handleTableSort(header.dataset.sort));
+        });
+
+        // Event listeners for all reviews table sorting
+        document.querySelectorAll('#allReviewsTableContainer th[data-sort]').forEach(header => {
+            header.addEventListener('click', () => handleAllReviewsTableSort(header.dataset.sort));
+        });
+
+        // Add responsive table container wrapper
+        function wrapTablesInContainer() {
+            const tables = document.querySelectorAll('.reviews-table, .app-stats table');
+            tables.forEach(table => {
+                if (!table.parentElement.classList.contains('table-container')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'table-container';
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
                 }
             });
-
-            const appSelect = document.getElementById('appSelect');
-            appSelect.innerHTML = '<option value="">Select App</option>';
-            
-            Array.from(apps.values())
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .forEach(app => {
-                    const option = document.createElement('option');
-                    option.value = app.packageName;
-                    option.textContent = app.name;
-                    appSelect.appendChild(option);
-                });
         }
 
-        // Function to display reviews for selected app
-        function displayAppReviews(packageName) {
-            const appReviews = allReviews.filter(review => review.packageName === packageName);
-            document.getElementById('appReviewCount').textContent = `${appReviews.length} reviews`;
-
-            const container = document.getElementById('allReviewsContainer');
-            container.innerHTML = '';
-
-            appReviews.forEach(review => {
-                const card = document.createElement('div');
-                card.className = 'review-card';
-                card.onclick = () => window.open(review.url, '_blank');
-                
-                const stars = '★'.repeat(review.scoreText) + '☆'.repeat(5 - review.scoreText);
-                const timeAgo = getTimeAgo(review.date);
-                
-                card.innerHTML = `
-                    <div class="review-header">
-                        <span class="version">v${review.version}</span>
-                    </div>
-                    <div class="stars">${stars}</div>
-                    <div class="review-content">${review.text}</div>
-                    ${review.reply ? `
-                        <div class="review-reply">
-                            <div><strong>Developer Reply:</strong> ${review.reply}</div>
-                            <div><small>${review.replyDate}</small></div>
-                        </div>
-                    ` : ''}
-                    <div class="review-meta">
-                        <div class="user-info">
-                            <img src="${review.userImage}" alt="${review.userName}" class="user-image" onerror="this.src='https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png'">
-                            <span>${review.userName}</span>
-                        </div>
-                        <div class="date-info">
-                            <div>${review.date}</div>
-                            <div style="color: #666; font-size: 0.9em;">${timeAgo}</div>
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(card);
-            });
-        }
-
-        // Event listener for app selection
-        document.getElementById('appSelect').addEventListener('change', (e) => {
-            if (e.target.value) {
-                displayAppReviews(e.target.value);
-            } else {
-                document.getElementById('allReviewsContainer').innerHTML = '';
-                document.getElementById('appReviewCount').textContent = '';
-            }
-        });
-
-        // Event listener for export app button
-        document.getElementById('exportAppBtn').addEventListener('click', () => {
-            const appSelect = document.getElementById('appSelect');
-            if (!appSelect.value) {
-                alert('Please select an app first');
-                return;
-            }
-
-            const appReviews = allReviews.filter(review => review.packageName === appSelect.value);
-            if (appReviews.length === 0) {
-                alert('No reviews to export');
-                return;
-            }
-
-            const appName = appSelect.options[appSelect.selectedIndex].text;
-            const filename = `reviews_${appName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.csv`;
-            
-            const csv = reviewsToCSV(appReviews);
-            downloadCSV(csv, filename);
-        });
+        // Initialize the viewer
+        initializeViewer();
     </script>
 </body>
 </html> 

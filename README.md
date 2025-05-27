@@ -40,3 +40,16 @@ export default {
   "com.facebook.katana": "Facebook"
 }
 ```
+
+### 4. Running the Project
+
+1. Start the scraping process:
+```bash
+npm start
+```
+
+2. Wait for the scraping process to complete. This may take some time depending on the number of reviews being fetched.
+
+3. Once the scraping is finished, open `view-reviews.html` in your web browser to view the fetched reviews.
+
+Note: The scraping process needs to complete before viewing the reviews. You can open the HTML file independently after the scraping is done.

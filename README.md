@@ -10,7 +10,7 @@ This project allows you to fetch and update Google Play Store reviews for any pu
 - On subsequent runs, fetches the latest reviews and only adds new ones (deduplication)
 - Handles large batches (e.g., 9000 reviews at a time)
 - Easy to configure and run
-- **Standalone mode**: Run the script independently to fetch reviews for a single app
+- **Standalone mode**: Standalone viewer for fetched reviews
 - **CSV Export**: Export reviews to CSV format for easy analysis
 
 ---

@@ -33,8 +33,8 @@ npm install
 - Edit `package-names.json` to include the package names of the apps you want to fetch reviews for.
 
 Example of `package-names.json`:
-```json
-{
+```javascript
+export default {
   "com.whatsapp": "WhatsApp",
   "com.instagram.android": "Instagram",
   "com.facebook.katana": "Facebook"

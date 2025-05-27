@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Store Reviews Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        select {
+            padding: 8px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .review-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .review-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        .review-content {
+            margin: 10px 0;
+        }
+        .review-reply {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-top: 10px;
+            border-left: 3px solid #007bff;
+        }
+        .stars {
+            color: #ffc107;
+        }
+        .app-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .version {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .review-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h1>Play Store Reviews Viewer</h1>
+        <select id="monthSelect">
+            <option value="">Select Month</option>
+        </select>
+        <span id="reviewCount"></span>
+        <button id="exportBtn" style="margin-left: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Export Month to CSV</button>
+    </div>
+    <div id="reviewsContainer"></div>
+
+    <script>
+        let allReviews = [];
+        let currentMonthReviews = [];
+
+        // Function to convert array to CSV
+        function arrayToCSV(arr) {
+            const headers = ['pos', 'packageName', 'appName', 'userName', 'scoreText', 'text', 'date', 'version', 'reply', 'replyDate', 'url', 'userImage'];
+            const csvContent = [
+                headers.join(','),
+                ...arr.map((review, index) => 
+                    headers.map(header => {
+                        const value = review[header] || '';
+                        // Escape quotes and wrap in quotes if contains comma or newline
+                        return `"${String(value).replace(/"/g, '""')}"`;
+                    }).join(',')
+                )
+            ].join('\n');
+            return csvContent;
+        }
+
+        // Function to download CSV
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Load reviews from JSON file
+        async function loadReviews() {
+            try {
+                const response = await fetch('output/all-reviews.json');
+                allReviews = await response.json();
+                populateMonthSelect();
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                document.getElementById('reviewsContainer').innerHTML = 'Error loading reviews. Please make sure the JSON file exists.';
+            }
+        }
+
+        // Populate month select dropdown
+        function populateMonthSelect() {
+            const months = new Set();
+            allReviews.forEach(review => {
+                const date = new Date(review.date);
+                const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                months.add(monthYear);
+            });
+
+            const monthSelect = document.getElementById('monthSelect');
+            Array.from(months).sort().reverse().forEach(month => {
+                const [year, monthNum] = month.split('-');
+                const date = new Date(year, monthNum - 1);
+                const option = document.createElement('option');
+                option.value = month;
+                option.textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+                monthSelect.appendChild(option);
+            });
+
+            // Set current month as default
+            const now = new Date();
+            const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            
+            // If current month exists in the options, select it
+            if (months.has(currentMonth)) {
+                monthSelect.value = currentMonth;
+                displayReviews(currentMonth);
+            } else {
+                // If current month doesn't exist, select the first available month
+                const firstMonth = Array.from(months).sort().reverse()[0];
+                if (firstMonth) {
+                    monthSelect.value = firstMonth;
+                    displayReviews(firstMonth);
+                }
+            }
+        }
+
+        // Display reviews for selected month
+        function displayReviews(month) {
+            const [year, monthNum] = month.split('-');
+            const startDate = new Date(year, monthNum - 1, 1);
+            const endDate = new Date(year, monthNum, 0);
+
+            currentMonthReviews = allReviews.filter(review => {
+                const reviewDate = new Date(review.date);
+                return reviewDate >= startDate && reviewDate <= endDate;
+            });
+
+            document.getElementById('reviewCount').textContent = `${currentMonthReviews.length} reviews`;
+
+            const container = document.getElementById('reviewsContainer');
+            container.innerHTML = '';
+
+            currentMonthReviews.forEach(review => {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.onclick = () => window.open(review.url, '_blank');
+                
+                const stars = '★'.repeat(review.scoreText) + '☆'.repeat(5 - review.scoreText);
+                
+                card.innerHTML = `
+                    <div class="review-header">
+                        <span class="app-name">${review.appName}</span>
+                        <span class="version">v${review.version}</span>
+                    </div>
+                    <div class="stars">${stars}</div>
+                    <div class="review-content">${review.text}</div>
+                    ${review.reply ? `
+                        <div class="review-reply">
+                            <div><strong>Developer Reply:</strong> ${review.reply}</div>
+                            <div><small>${review.replyDate}</small></div>
+                        </div>
+                    ` : ''}
+                    <div class="review-meta">
+                        <div class="user-info">
+                            <img src="${review.userImage}" alt="${review.userName}" class="user-image" onerror="this.src='https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png'">
+                            <span>${review.userName}</span>
+                        </div>
+                        <span>${review.date}</span>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Event listener for month selection
+        document.getElementById('monthSelect').addEventListener('change', (e) => {
+            if (e.target.value) {
+                displayReviews(e.target.value);
+            } else {
+                document.getElementById('reviewsContainer').innerHTML = '';
+                document.getElementById('reviewCount').textContent = '';
+                currentMonthReviews = [];
+            }
+        });
+
+        // Event listener for export button
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            if (currentMonthReviews.length === 0) {
+                alert('No reviews to export');
+                return;
+            }
+
+            const monthSelect = document.getElementById('monthSelect');
+            const selectedMonth = monthSelect.options[monthSelect.selectedIndex].text;
+            const filename = `reviews_${selectedMonth.replace(' ', '_')}.csv`;
+            
+            const csv = arrayToCSV(currentMonthReviews);
+            downloadCSV(csv, filename);
+        });
+
+        // Load reviews when page loads
+        loadReviews();
+    </script>
+</body>
+</html> 

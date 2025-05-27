@@ -127,7 +127,7 @@ async function generateReviewReport(allReviews) {
     
     // Save to file
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filename = `./json/review_report_${timestamp}.csv`;
+    const filename = `./output/review_report_${timestamp}.csv`;
     fs.writeFileSync(filename, csvContent);
     
     console.log(`Successfully generated review report at ${filename}`);
@@ -147,7 +147,6 @@ async function fetchReviewsAndExportToCSV() {
             
             // Use fetchReviewForSpecificApp to get all reviews for this package
             const packageReviews = await fetchReviewForSpecificApp(packageName);
-            
             // Transform reviews for this package
             const transformedReviews = packageReviews.map((review, index) => ({
                 pos: index + counter + 1,                
@@ -159,7 +158,9 @@ async function fetchReviewsAndExportToCSV() {
                 date: new Date(review.date).toLocaleString(),
                 version: review.version || 'Unknown',
                 reply: review.replyText ? review.replyText.replace(/\n/g, ' ').replace(/,/g, ';') : '',
-                replyDate: review.replyDate ? new Date(review.replyDate).toLocaleString() : ''
+                replyDate: review.replyDate ? new Date(review.replyDate).toLocaleString() : '',
+                url: review.url,
+                userImage: review.userImage
             }));
             
             counter += transformedReviews.length
@@ -195,10 +196,18 @@ async function fetchReviewsAndExportToCSV() {
         
         // Save to file
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const filename = `./json/all_reviews_${timestamp}.csv`;
+        if (!fs.existsSync("./output")) {
+            fs.mkdirSync("./output", { recursive: true });
+        }
+        const filename = `./output/all_reviews_${timestamp}.csv`;
         fs.writeFileSync(filename, csvContent);
         
         console.log(`Successfully exported ${allReviews.length} total reviews to ${filename}`);
+        
+        // Save all reviews to JSON file
+        const jsonFilename = `./output/all-reviews.json`;
+        fs.writeFileSync(jsonFilename, JSON.stringify(allReviews, null, 2));
+        console.log(`Successfully saved all reviews to ${jsonFilename}`);
         
         // Generate and save the review report
         await generateReviewReport(allReviews);

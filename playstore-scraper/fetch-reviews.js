@@ -183,10 +183,10 @@ async function fetchReviewsAndExportToCSV() {
         // Save to files
         ensureDirectoryExists("./output");
         
-        // Save CSV
-        const csvFilename = generateFilename("./output/all_reviews", "csv");
-        saveReviewsToCSV(allReviews, csvFilename);
-        console.log(`Successfully exported ${allReviews.length} total reviews to ${csvFilename}`);
+        // // Save CSV
+        // const csvFilename = generateFilename("./output/all_reviews", "csv");
+        // saveReviewsToCSV(allReviews, csvFilename);
+        // console.log(`Successfully exported ${allReviews.length} total reviews to ${csvFilename}`);
         
         // Save JSON
         const jsonFilename = "./output/all-reviews.json";
@@ -194,7 +194,7 @@ async function fetchReviewsAndExportToCSV() {
         console.log(`Successfully saved all reviews to ${jsonFilename}`);
         
         // Generate and save the review report
-        await generateReviewReport(allReviews);
+        // await generateReviewReport(allReviews);
         
     } catch (error) {
         console.error('Error in fetchReviewsAndExportToCSV:', error);

@@ -19,7 +19,7 @@ This project allows you to fetch and update Google Play Store reviews for any pu
 
 ### 1. Clone the repository
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Humayung/playstore-reviews-automation.git
 cd playstore-reviews-automation
 ```
 

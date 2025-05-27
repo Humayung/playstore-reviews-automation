@@ -1,6 +1,7 @@
 import gplay from "google-play-scraper";
 import fs from "fs";
 import packageNames from "./package-names.js";
+import { saveReviewsToCSV, saveReviewsToJSON, generateFilename, ensureDirectoryExists } from "./utils.js";
 
 async function fetchReviews(packageName, numReviews = 100, lang, country) {
     try {
@@ -44,13 +45,9 @@ async function fetchReviews(packageName, numReviews = 100, lang, country) {
 }
 
 function saveReviews(packageName, reviews) {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const dir = `./json`;
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-    const filename = `${dir}/reviews_${packageName}.json`;
-    fs.writeFileSync(filename, JSON.stringify(reviews, null, 2));
+    ensureDirectoryExists("./output");
+    const filename = `./output/reviews_${packageName}.json`;
+    saveReviewsToJSON(reviews, filename);
 }
 
 async function fetchReviewForSpecificApp(packageName) {
@@ -134,19 +131,17 @@ async function generateReviewReport(allReviews) {
 }
 
 async function fetchReviewsAndExportToCSV() {
-    // this function fetch all reviews from all apps.
-    // then combine it all and make it in one csv.
-    // the column i only need are userName, scoreText, text, date (in human readable), version
     try {
         let allReviews = [];
         
         // Fetch reviews for each package
-        let counter = 0
+        let counter = 0;
         for (const packageName of Object.keys(packageNames)) {
             console.log(`Fetching reviews for ${packageName}...`);
             
             // Use fetchReviewForSpecificApp to get all reviews for this package
             const packageReviews = await fetchReviewForSpecificApp(packageName);
+            
             // Transform reviews for this package
             const transformedReviews = packageReviews.map((review, index) => ({
                 pos: index + counter + 1,                
@@ -163,7 +158,7 @@ async function fetchReviewsAndExportToCSV() {
                 userImage: review.userImage
             }));
             
-            counter += transformedReviews.length
+            counter += transformedReviews.length;
             // Add to the main array
             allReviews = [...allReviews, ...transformedReviews];
             console.log(`Added ${transformedReviews.length} reviews from ${packageName}`);
@@ -185,28 +180,17 @@ async function fetchReviewsAndExportToCSV() {
             pos: index + 1
         }));
         
-        // Create CSV content
-        const headers = ['pos', 'packageName', 'appName', 'userName', 'scoreText', 'text', 'date', 'version', 'reply', 'replyDate'];
-        const csvContent = [
-            headers.join(','),
-            ...allReviews.map(review => 
-                headers.map(header => `"${review[header]}"`).join(',')
-            )
-        ].join('\n');
+        // Save to files
+        ensureDirectoryExists("./output");
         
-        // Save to file
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        if (!fs.existsSync("./output")) {
-            fs.mkdirSync("./output", { recursive: true });
-        }
-        const filename = `./output/all_reviews_${timestamp}.csv`;
-        fs.writeFileSync(filename, csvContent);
+        // Save CSV
+        const csvFilename = generateFilename("./output/all_reviews", "csv");
+        saveReviewsToCSV(allReviews, csvFilename);
+        console.log(`Successfully exported ${allReviews.length} total reviews to ${csvFilename}`);
         
-        console.log(`Successfully exported ${allReviews.length} total reviews to ${filename}`);
-        
-        // Save all reviews to JSON file
-        const jsonFilename = `./output/all-reviews.json`;
-        fs.writeFileSync(jsonFilename, JSON.stringify(allReviews, null, 2));
+        // Save JSON
+        const jsonFilename = "./output/all-reviews.json";
+        saveReviewsToJSON(allReviews, jsonFilename);
         console.log(`Successfully saved all reviews to ${jsonFilename}`);
         
         // Generate and save the review report

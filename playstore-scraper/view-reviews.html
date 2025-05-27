@@ -1,181 +1,684 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Play Store Reviews Viewer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root[data-theme="light"] {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary-color: #64748b;
+            --secondary-hover: #475569;
+            --success-color: #10b981;
+            --success-hover: #059669;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --hover-color: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --gradient-start: #f8fafc;
+            --gradient-end: #f1f5f9;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        :root[data-theme="dark"] {
+            --primary-color: #60a5fa;
+            --primary-hover: #3b82f6;
+            --secondary-color: #94a3b8;
+            --secondary-hover: #64748b;
+            --success-color: #34d399;
+            --success-hover: #10b981;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --hover-color: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --gradient-start: #0f172a;
+            --gradient-end: #1e293b;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+            --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
         }
+
         .controls {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
         }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
         .tabs {
             display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
+            margin-bottom: 32px;
+            border-bottom: 2px solid var(--border-color);
+            gap: 8px;
+            padding-bottom: 2px;
         }
+
         .tab {
-            padding: 10px 20px;
+            padding: 12px 24px;
             cursor: pointer;
-            border: 1px solid transparent;
-            border-bottom: none;
-            margin-right: 5px;
-            border-radius: 4px 4px 0 0;
+            border: none;
+            border-radius: 12px 12px 0 0;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
+
+        .tab:hover {
+            background: var(--hover-color);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
         .tab.active {
-            background: white;
-            border-color: #ddd;
-            border-bottom-color: white;
-            margin-bottom: -1px;
+            background: var(--card-bg);
+            color: var(--primary-color);
+            box-shadow: var(--card-shadow);
         }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-color);
+            animation: slideIn 0.3s ease-out;
+        }
+
         .tab-content {
             display: none;
         }
+
         .tab-content.active {
             display: block;
         }
+
+        @keyframes slideIn {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            background: var(--hover-color);
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .left-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .right-controls {
+            display: flex;
+            gap: 8px;
+        }
+
         select {
-            padding: 8px;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-        .review-card {
-            background: white;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-width: 200px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            height: 48px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
         }
-        .review-card:hover {
+
+        select:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 48px;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        button:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: var(--card-shadow-hover);
         }
+
+        button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        #exportBtn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        #exportBtn:hover {
+            background: var(--primary-hover);
+        }
+
+        #exportAllBtn {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        #exportAllBtn:hover {
+            background: var(--secondary-hover);
+        }
+
+        #standaloneBtn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        #standaloneBtn:hover {
+            background: var(--success-hover);
+        }
+
+        #reviewCount {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: var(--hover-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .review-card {
+            background: var(--card-bg);
+            padding: 24px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .review-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--primary-color);
+        }
+
+        .review-card:hover::before {
+            opacity: 1;
+        }
+
         .review-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            color: #666;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
         }
+
         .review-content {
-            margin: 10px 0;
+            margin: 16px 0;
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            position: relative;
         }
+
         .review-reply {
-            background: #f8f9fa;
-            padding: 10px;
-            margin-top: 10px;
-            border-left: 3px solid #007bff;
+            background: var(--hover-color);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
         }
+
+        .review-reply::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), transparent);
+            opacity: 0.1;
+        }
+
+        .review-reply strong {
+            color: var(--text-primary);
+        }
+
+        .review-reply small {
+            color: var(--text-secondary);
+        }
+
         .stars {
-            color: #ffc107;
+            color: #f59e0b;
+            font-size: 20px;
+            letter-spacing: 4px;
+            margin: 12px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .app-name {
-            font-weight: bold;
-            color: #333;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 16px;
         }
+
         .version {
-            color: #6c757d;
-            font-size: 0.9em;
+            color: var(--text-secondary);
+            font-size: 13px;
+            background: var(--hover-color);
+            padding: 4px 8px;
+            border-radius: 6px;
         }
+
         .user-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
+
         .user-image {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             object-fit: cover;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            transition: transform 0.3s ease;
         }
+
+        .review-card:hover .user-image {
+            transform: scale(1.1);
+        }
+
         .review-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-secondary);
         }
+
+        .date-info {
+            color: var(--text-secondary);
+        }
+
+        .date-info div:first-child {
+            color: var(--text-primary);
+        }
+
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
         }
+
         .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .stat-card:hover::before {
+            opacity: 0.05;
+        }
+
         .stat-title {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 500;
         }
+
         .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #333;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-top: 8px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         .chart-container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .chart-container h3 {
+            font-size: 18px;
+            font-weight: 600;
             margin-bottom: 20px;
+            color: var(--text-primary);
         }
+
         .app-stats {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
         }
+
+        .app-stats:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .app-stats h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
         .app-stats table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 16px;
         }
-        .app-stats th, .app-stats td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
+
         .app-stats th {
-            background: #f8f9fa;
-            font-weight: bold;
+            background: var(--hover-color);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+            padding: 16px;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
         }
-        .app-stats tr:hover {
-            background: #f8f9fa;
+
+        .app-stats td {
+            padding: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .app-stats tr:hover td {
+            background: var(--hover-color);
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .controls-row {
+                padding: 12px;
+            }
+
+            select, button {
+                width: 100%;
+            }
+
+            .stat-card {
+                padding: 24px;
+            }
+
+            .stat-value {
+                font-size: 28px;
+            }
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-primary);
         }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
     <div class="controls">
         <h1>Play Store Reviews Viewer</h1>
         <div class="tabs">
             <div class="tab active" data-tab="reviews">Reviews</div>
+            <div class="tab" data-tab="allReviews">All Reviews</div>
             <div class="tab" data-tab="report">Report</div>
         </div>
         <div id="reviewsTab" class="tab-content active">
-            <select id="monthSelect">
-                <option value="">Select Month</option>
-            </select>
-            <span id="reviewCount"></span>
-            <button id="exportBtn" style="margin-left: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Export Month to CSV</button>
-            <button id="exportAllBtn" style="margin-left: 10px; padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Export All to CSV</button>
-            <button id="standaloneBtn" style="margin-left: 10px; padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Make Standalone Viewer</button>
+            <div class="controls-row">
+                <div class="left-controls">
+                    <select id="monthSelect">
+                        <option value="">Select Month</option>
+                    </select>
+                    <span id="reviewCount"></span>
+                </div>
+                <div class="right-controls">
+                    <button id="exportBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export Month
+                    </button>
+                    <button id="exportAllBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export All
+                    </button>
+                    <button id="standaloneBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                        Make Standalone
+                    </button>
+                </div>
+            </div>
             <div id="reviewsContainer"></div>
+        </div>
+        <div id="allReviewsTab" class="tab-content">
+            <div class="controls-row">
+                <div class="left-controls">
+                    <select id="appSelect">
+                        <option value="">Select App</option>
+                    </select>
+                    <span id="appReviewCount"></span>
+                </div>
+                <div class="right-controls">
+                    <button id="exportAppBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export App
+                    </button>
+                </div>
+            </div>
+            <div id="allReviewsContainer"></div>
         </div>
         <div id="reportTab" class="tab-content">
             <div class="stats-grid">
@@ -344,23 +847,17 @@
                         label: 'Number of Reviews',
                         data: Object.values(ratingDist),
                         backgroundColor: [
-                            'rgba(220, 53, 69, 0.8)',  // Red
-                            'rgba(255, 193, 7, 0.8)',   // Yellow
-                            'rgba(23, 162, 184, 0.8)',  // Cyan
-                            'rgba(40, 167, 69, 0.8)',   // Green
-                            'rgba(0, 123, 255, 0.8)'    // Blue
+                            'rgba(239, 68, 68, 0.9)',   // Red
+                            'rgba(245, 158, 11, 0.9)',  // Orange
+                            'rgba(234, 179, 8, 0.9)',   // Yellow
+                            'rgba(34, 197, 94, 0.9)',   // Green
+                            'rgba(59, 130, 246, 0.9)'   // Blue
                         ],
-                        borderColor: [
-                            'rgb(220, 53, 69)',
-                            'rgb(255, 193, 7)',
-                            'rgb(23, 162, 184)',
-                            'rgb(40, 167, 69)',
-                            'rgb(0, 123, 255)'
-                        ],
-                        borderWidth: 2,
-                        borderRadius: 5,
+                        borderWidth: 0,
+                        borderRadius: 8,
                         barThickness: 40,
-                        maxBarThickness: 50
+                        maxBarThickness: 50,
+                        borderSkipped: false
                     }]
                 },
                 options: {
@@ -372,14 +869,20 @@
                         },
                         tooltip: {
                             backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 12,
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            padding: 16,
                             titleFont: {
                                 size: 14,
-                                weight: 'bold'
+                                weight: 'bold',
+                                family: "'Inter', sans-serif"
                             },
                             bodyFont: {
-                                size: 13
+                                size: 13,
+                                family: "'Inter', sans-serif"
                             },
+                            cornerRadius: 8,
+                            displayColors: false,
                             callbacks: {
                                 label: function(context) {
                                     const value = context.raw;
@@ -394,15 +897,18 @@
                         y: {
                             beginAtZero: true,
                             grid: {
-                                color: 'rgba(0, 0, 0, 0.1)',
-                                drawBorder: false
+                                color: 'var(--border-color)',
+                                drawBorder: false,
+                                lineWidth: 1
                             },
                             ticks: {
                                 stepSize: 1,
                                 font: {
-                                    size: 12
+                                    size: 12,
+                                    family: "'Inter', sans-serif"
                                 },
-                                padding: 10
+                                padding: 10,
+                                color: 'var(--text-secondary)'
                             }
                         },
                         x: {
@@ -412,15 +918,21 @@
                             ticks: {
                                 font: {
                                     size: 14,
-                                    weight: 'bold'
+                                    weight: 'bold',
+                                    family: "'Inter', sans-serif"
                                 },
-                                padding: 10
+                                padding: 10,
+                                color: 'var(--text-primary)'
                             }
                         }
                     },
                     animation: {
                         duration: 1000,
                         easing: 'easeOutQuart'
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     }
                 }
             });
@@ -468,10 +980,12 @@
             try {
                 if (isStandalone) {
                     populateMonthSelect();
+                    populateAppSelect();
                 } else {
                     const response = await fetch('output/all-reviews.json');
                     allReviews = await response.json();
                     populateMonthSelect();
+                    populateAppSelect();
                 }
                 updateStatistics();
             } catch (error) {
@@ -634,6 +1148,136 @@
 
         // Initialize when page loads
         initializeViewer();
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = themeToggle.querySelector('.sun-icon');
+        const moonIcon = themeToggle.querySelector('.moon-icon');
+        const html = document.documentElement;
+
+        // Check for saved theme preference, default to dark
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeIcons(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcons(newTheme);
+        });
+
+        function updateThemeIcons(theme) {
+            if (theme === 'dark') {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            } else {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            }
+        }
+
+        // Function to populate app select dropdown
+        function populateAppSelect() {
+            const apps = new Map();
+            allReviews.forEach(review => {
+                if (!apps.has(review.packageName)) {
+                    apps.set(review.packageName, {
+                        name: review.appName,
+                        packageName: review.packageName
+                    });
+                }
+            });
+
+            const appSelect = document.getElementById('appSelect');
+            appSelect.innerHTML = '<option value="">Select App</option>';
+            
+            Array.from(apps.values())
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .forEach(app => {
+                    const option = document.createElement('option');
+                    option.value = app.packageName;
+                    option.textContent = app.name;
+                    appSelect.appendChild(option);
+                });
+        }
+
+        // Function to display reviews for selected app
+        function displayAppReviews(packageName) {
+            const appReviews = allReviews.filter(review => review.packageName === packageName);
+            document.getElementById('appReviewCount').textContent = `${appReviews.length} reviews`;
+
+            const container = document.getElementById('allReviewsContainer');
+            container.innerHTML = '';
+
+            appReviews.forEach(review => {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.onclick = () => window.open(review.url, '_blank');
+                
+                const stars = '★'.repeat(review.scoreText) + '☆'.repeat(5 - review.scoreText);
+                const timeAgo = getTimeAgo(review.date);
+                
+                card.innerHTML = `
+                    <div class="review-header">
+                        <span class="version">v${review.version}</span>
+                    </div>
+                    <div class="stars">${stars}</div>
+                    <div class="review-content">${review.text}</div>
+                    ${review.reply ? `
+                        <div class="review-reply">
+                            <div><strong>Developer Reply:</strong> ${review.reply}</div>
+                            <div><small>${review.replyDate}</small></div>
+                        </div>
+                    ` : ''}
+                    <div class="review-meta">
+                        <div class="user-info">
+                            <img src="${review.userImage}" alt="${review.userName}" class="user-image" onerror="this.src='https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png'">
+                            <span>${review.userName}</span>
+                        </div>
+                        <div class="date-info">
+                            <div>${review.date}</div>
+                            <div style="color: #666; font-size: 0.9em;">${timeAgo}</div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Event listener for app selection
+        document.getElementById('appSelect').addEventListener('change', (e) => {
+            if (e.target.value) {
+                displayAppReviews(e.target.value);
+            } else {
+                document.getElementById('allReviewsContainer').innerHTML = '';
+                document.getElementById('appReviewCount').textContent = '';
+            }
+        });
+
+        // Event listener for export app button
+        document.getElementById('exportAppBtn').addEventListener('click', () => {
+            const appSelect = document.getElementById('appSelect');
+            if (!appSelect.value) {
+                alert('Please select an app first');
+                return;
+            }
+
+            const appReviews = allReviews.filter(review => review.packageName === appSelect.value);
+            if (appReviews.length === 0) {
+                alert('No reviews to export');
+                return;
+            }
+
+            const appName = appSelect.options[appSelect.selectedIndex].text;
+            const filename = `reviews_${appName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.csv`;
+            
+            const csv = reviewsToCSV(appReviews);
+            downloadCSV(csv, filename);
+        });
     </script>
 </body>
 </html> 

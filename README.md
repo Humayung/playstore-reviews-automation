@@ -53,3 +53,4 @@ npm start
 3. Once the scraping is finished, open `view-reviews.html` in your web browser to view the fetched reviews.
 
 Note: The scraping process needs to complete before viewing the reviews. You can open the HTML file independently after the scraping is done.
+**Note:** This project was made with help from AI. Its mainly for my private use, but feel free to use it if you find it useful. No guarantees though.
